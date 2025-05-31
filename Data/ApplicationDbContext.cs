@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
+using assignment_mvc_carrental.Models;
 
 namespace assignment_mvc_carrental.Data
 {
@@ -9,5 +10,7 @@ namespace assignment_mvc_carrental.Data
             : base(options)
         {
         }
+        public DbSet<assignment_mvc_carrental.Models.VehicleViewModel> VehicleViewModel { get; set; } = default!;
+        public DbSet<assignment_mvc_carrental.Models.CustomerViewModel> CustomerViewModel { get; set; } = default!;
     }
 }
