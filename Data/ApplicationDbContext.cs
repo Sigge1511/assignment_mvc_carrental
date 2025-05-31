@@ -12,5 +12,6 @@ namespace assignment_mvc_carrental.Data
         }
         public DbSet<assignment_mvc_carrental.Models.VehicleViewModel> VehicleViewModel { get; set; } = default!;
         public DbSet<assignment_mvc_carrental.Models.CustomerViewModel> CustomerViewModel { get; set; } = default!;
+        public DbSet<assignment_mvc_carrental.Models.BookingViewModel> BookingViewModel { get; set; } = default!;
     }
 }
