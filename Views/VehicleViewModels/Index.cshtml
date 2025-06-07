@@ -3,26 +3,29 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-<h1>Index</h1>
+<br>
+<h1>Our premium vehicles</h1>
 
 @* <p>
-    <a asp-action="Create">Create New</a>
+    <a asp-action="Create">Create New</a>  //Endast för admin?
 </p> *@
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Title)
+                Preview
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Year)
+                Name
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.PricePerDay)
+                Year Made
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsAvailable)
+                Rental price per day
+            </th>
+            <th>
+                Availablity
             </th>
             <th>
                 @Html.DisplayNameFor(model => model.Description)
@@ -40,13 +43,16 @@
 @foreach (var item in Model) {
         <tr>
             <td>
+                <img src="@item.ImageUrl1" alt="Bild 1" style="max-width: 100%;" />
+            </td>
+            <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.Year)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.PricePerDay)
+                @Html.DisplayFor(modelItem => item.PricePerDay) kronor
             </td>
             <td>
                 @Html.DisplayFor(modelItem => item.IsAvailable)
@@ -61,10 +67,10 @@
                 @Html.DisplayFor(modelItem => item.ImageUrl2)
             </td> *@
             <td>
-                <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
+@*                 <a class="links" asp-action="Edit" asp-route-id="@item.Id">Edit</a>          Bara för admin??
+ *@                <a class="links" asp-action="Details" asp-route-id="@item.Id">Details</a> 
+@*                 <a class="links" asp-action="Delete" asp-route-id="@item.Id">Delete</a>      Bara för admin??
+ *@            </td>
         </tr>
 }
     </tbody>

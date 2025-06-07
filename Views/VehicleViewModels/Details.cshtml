@@ -4,10 +4,9 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>More details</h1>
+<h1>@Model.Title</h1>
 
 <div>
-    <h4>@Model.Title</h4>
     <hr />
     @if (!string.IsNullOrEmpty(Model.ImageUrl1))
     {
@@ -18,6 +17,11 @@
     {
         <img src="@Model.ImageUrl2" alt="Bild 2" style="max-width: 60%;" />
     }
+    <br><br>
+
+@*     LÄGG IN HYRKNAPP HÄR
+ *@
+
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
@@ -64,6 +68,9 @@
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+    @* <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |            Endast för admin??  *@
+    <a class="links" asp-action="Index">Back to List</a>
 </div>
+<br>
+<br>
+<br>
