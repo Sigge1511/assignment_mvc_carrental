@@ -19,22 +19,22 @@ namespace assignment_mvc_carrental.Repos
             return await _context.VehicleSet.ToListAsync();
         }
 
-        public Vehicle GetVehicleByID(int vehicleId)
+        public async Task<Vehicle> GetVehicleByIDAsync(int vehicleId)
+        {            
+            return await _context.VehicleSet.FirstOrDefaultAsync(v => v.Id == vehicleId);
+        }
+
+        public void SaveVehicleAsync()
         {
             throw new NotImplementedException();
         }
 
-        public void SaveVehicle()
+        public void UpdateVehicleAsync(Vehicle vehicle)
         {
             throw new NotImplementedException();
         }
 
-        public void UpdateVehicle(Vehicle vehicle)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void DeleteVehicle(int vehicleId)
+        public void DeleteVehicleAsync(int vehicleId)
         {
             throw new NotImplementedException();
         }

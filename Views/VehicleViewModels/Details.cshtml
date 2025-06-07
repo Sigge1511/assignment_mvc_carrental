@@ -4,11 +4,20 @@
     ViewData["Title"] = "Details";
 }
 
-<h1>Details</h1>
+<h1>More details</h1>
 
 <div>
-    <h4>VehicleViewModel</h4>
+    <h4>@Model.Title</h4>
     <hr />
+    @if (!string.IsNullOrEmpty(Model.ImageUrl1))
+    {
+        <img src="@Model.ImageUrl1" alt="Bild 1" style="max-width: 60%;" />
+    }
+    <br><br>
+    @if (!string.IsNullOrEmpty(Model.ImageUrl2))
+    {
+        <img src="@Model.ImageUrl2" alt="Bild 2" style="max-width: 60%;" />
+    }
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.Title)
@@ -40,7 +49,7 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Description)
         </dd>
-        <dt class = "col-sm-2">
+ @*        <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.ImageUrl1)
         </dt>
         <dd class = "col-sm-10">
@@ -51,7 +60,7 @@
         </dt>
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.ImageUrl2)
-        </dd>
+        </dd> *@
     </dl>
 </div>
 <div>

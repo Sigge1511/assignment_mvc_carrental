@@ -14,9 +14,9 @@ namespace assignment_mvc_carrental.Controllers
 {
     public class VehicleVMController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
-        private readonly IVehicle _vehicleRepo; // Added dependency for IVehicle
+        private readonly ApplicationDbContext _context; // dependency för Context
+        private readonly IMapper _mapper; // dependency för IMapper
+        private readonly IVehicle _vehicleRepo; // dependency för IVehicle
 
         public VehicleVMController(ApplicationDbContext context, IMapper mapper, IVehicle vehicleRepo)
         {
@@ -46,12 +46,16 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var vehicleViewModel = await _context.VehicleSet
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (vehicleViewModel == null)
+            //Hämtar async eftersom det kan ta tid att hämta data från databasen och då är det best practice?
+            var vehicle = await _vehicleRepo.GetVehicleByIDAsync(id.Value); //hämtar fordonet med id genom interface -> repo -> db
+
+
+            if (vehicle == null)
             {
                 return NotFound();
             }
+
+            var vehicleViewModel = _mapper.Map<VehicleViewModel>(vehicle); //mappar fordonet till VehicleViewModel
 
             return View("~/Views/VehicleViewModels/Details.cshtml", vehicleViewModel); //returnerar vy i trädet + detaljerna för fordonet
         }
@@ -59,7 +63,7 @@ namespace assignment_mvc_carrental.Controllers
 
         //***********************************************************************************************************************
         // GET: VehicleViewModels/Create
-        public IActionResult Create()
+        public IActionResult Create() //ha controll för om user är admin här??
         {
             return View();
         }
