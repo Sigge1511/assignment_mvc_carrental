@@ -22,7 +22,7 @@ namespace assignment_mvc_carrental.Controllers
         // GET: BookingVM
         public async Task<IActionResult> Index()
         {
-            return View(await _context.BookingViewModel.ToListAsync());
+            return View(await _context.BookingSet.ToListAsync());
         }
 
         // GET: BookingVM/Details/5
@@ -33,7 +33,7 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var bookingViewModel = await _context.BookingViewModel
+            var bookingViewModel = await _context.BookingSet
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (bookingViewModel == null)
             {
@@ -73,7 +73,7 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var bookingViewModel = await _context.BookingViewModel.FindAsync(id);
+            var bookingViewModel = await _context.BookingSet.FindAsync(id);
             if (bookingViewModel == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var bookingViewModel = await _context.BookingViewModel
+            var bookingViewModel = await _context.BookingSet
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (bookingViewModel == null)
             {
@@ -139,10 +139,10 @@ namespace assignment_mvc_carrental.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var bookingViewModel = await _context.BookingViewModel.FindAsync(id);
+            var bookingViewModel = await _context.BookingSet.FindAsync(id);
             if (bookingViewModel != null)
             {
-                _context.BookingViewModel.Remove(bookingViewModel);
+                _context.BookingSet.Remove(bookingViewModel);
             }
 
             await _context.SaveChangesAsync();
@@ -151,7 +151,7 @@ namespace assignment_mvc_carrental.Controllers
 
         private bool BookingViewModelExists(int id)
         {
-            return _context.BookingViewModel.Any(e => e.Id == id);
+            return _context.BookingSet.Any(e => e.Id == id);
         }
     }
 }

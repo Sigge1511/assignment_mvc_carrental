@@ -7,24 +7,33 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Models;
+using AutoMapper;
 
 namespace assignment_mvc_carrental.Controllers
 {
     public class VehicleVMController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
 
-        public VehicleVMController(ApplicationDbContext context)
+        public VehicleVMController(ApplicationDbContext context, IMapper mapper)
         {
             _context = context;
+            _mapper = mapper;
         }
 
+
+        //***********************************************************************************************************************
         // GET: VehicleViewModels
         public async Task<IActionResult> Index()
         {
-            return View(await _context.VehicleViewModel.ToListAsync());
+            var vehicles = await _context.VehicleSet.ToListAsync();
+            var vmList = _mapper.Map<List<VehicleViewModel>>(vehicles);
+            return View(vmList);
         }
 
+
+        //***********************************************************************************************************************
         // GET: VehicleViewModels/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -33,7 +42,7 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var vehicleViewModel = await _context.VehicleViewModel
+            var vehicleViewModel = await _context.VehicleSet
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (vehicleViewModel == null)
             {
@@ -43,6 +52,8 @@ namespace assignment_mvc_carrental.Controllers
             return View(vehicleViewModel);
         }
 
+
+        //***********************************************************************************************************************
         // GET: VehicleViewModels/Create
         public IActionResult Create()
         {
@@ -65,6 +76,8 @@ namespace assignment_mvc_carrental.Controllers
             return View(vehicleViewModel);
         }
 
+
+        //***********************************************************************************************************************
         // GET: VehicleViewModels/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -73,7 +86,7 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var vehicleViewModel = await _context.VehicleViewModel.FindAsync(id);
+            var vehicleViewModel = await _context.VehicleSet.FindAsync(id);
             if (vehicleViewModel == null)
             {
                 return NotFound();
@@ -116,6 +129,8 @@ namespace assignment_mvc_carrental.Controllers
             return View(vehicleViewModel);
         }
 
+
+        //***********************************************************************************************************************
         // GET: VehicleViewModels/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -124,7 +139,7 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var vehicleViewModel = await _context.VehicleViewModel
+            var vehicleViewModel = await _context.VehicleSet
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (vehicleViewModel == null)
             {
@@ -139,19 +154,21 @@ namespace assignment_mvc_carrental.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var vehicleViewModel = await _context.VehicleViewModel.FindAsync(id);
+            var vehicleViewModel = await _context.VehicleSet.FindAsync(id);
             if (vehicleViewModel != null)
             {
-                _context.VehicleViewModel.Remove(vehicleViewModel);
+                _context.VehicleSet.Remove(vehicleViewModel);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
+
+        //***********************************************************************************************************************
         private bool VehicleViewModelExists(int id)
         {
-            return _context.VehicleViewModel.Any(e => e.Id == id);
+            return _context.VehicleSet.Any(e => e.Id == id);
         }
     }
 }

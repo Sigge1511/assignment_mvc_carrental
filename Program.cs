@@ -20,6 +20,10 @@ namespace assignment_mvc_carrental
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
+            builder.Services.AddAutoMapper(typeof(MappingProfile));
+
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

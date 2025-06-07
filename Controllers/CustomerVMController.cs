@@ -22,7 +22,7 @@ namespace assignment_mvc_carrental.Controllers
         // GET: CustomerVM
         public async Task<IActionResult> Index()
         {
-            return View(await _context.CustomerViewModel.ToListAsync());
+            return View(await _context.CustomerSet.ToListAsync());
         }
 
         // GET: CustomerVM/Details/5
@@ -33,7 +33,7 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var customerViewModel = await _context.CustomerViewModel
+            var customerViewModel = await _context.CustomerSet
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (customerViewModel == null)
             {
@@ -73,7 +73,7 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var customerViewModel = await _context.CustomerViewModel.FindAsync(id);
+            var customerViewModel = await _context.CustomerSet.FindAsync(id);
             if (customerViewModel == null)
             {
                 return NotFound();
@@ -124,7 +124,7 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var customerViewModel = await _context.CustomerViewModel
+            var customerViewModel = await _context.CustomerSet
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (customerViewModel == null)
             {
@@ -139,10 +139,10 @@ namespace assignment_mvc_carrental.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var customerViewModel = await _context.CustomerViewModel.FindAsync(id);
+            var customerViewModel = await _context.CustomerSet.FindAsync(id);
             if (customerViewModel != null)
             {
-                _context.CustomerViewModel.Remove(customerViewModel);
+                _context.CustomerSet.Remove(customerViewModel);
             }
 
             await _context.SaveChangesAsync();
@@ -151,7 +151,7 @@ namespace assignment_mvc_carrental.Controllers
 
         private bool CustomerViewModelExists(int id)
         {
-            return _context.CustomerViewModel.Any(e => e.Id == id);
+            return _context.CustomerSet.Any(e => e.Id == id);
         }
     }
 }
