@@ -1,6 +1,6 @@
 ﻿namespace assignment_mvc_carrental.Repos
 {
-    public class VehicleRepo
+    public class VehicleRepo:IVehicle 
     {
     }
 }

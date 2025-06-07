@@ -1,6 +1,6 @@
 ﻿namespace assignment_mvc_carrental.Repos
 {
-    public class BookingRepo
+    public class BookingRepo:IBooking 
     {
     }
 }
