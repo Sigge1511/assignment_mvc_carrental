@@ -1,4 +1,5 @@
 using assignment_mvc_carrental.Data;
+using assignment_mvc_carrental.Repos;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,7 +21,9 @@ namespace assignment_mvc_carrental
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddAutoMapper(typeof(MappingProfile));
+            builder.Services.AddAutoMapper(typeof(MappingProfile)); //mappning mellan klasser och VMs
+            builder.Services.AddScoped<IVehicle, VehicleRepo>();
+
 
 
 

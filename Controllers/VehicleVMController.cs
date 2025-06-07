@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Models;
 using AutoMapper;
+using assignment_mvc_carrental.Repos;
 
 namespace assignment_mvc_carrental.Controllers
 {
@@ -15,21 +16,24 @@ namespace assignment_mvc_carrental.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
+        private readonly IVehicle _vehicleRepo; // Added dependency for IVehicle
 
-        public VehicleVMController(ApplicationDbContext context, IMapper mapper)
+        public VehicleVMController(ApplicationDbContext context, IMapper mapper, IVehicle vehicleRepo)
         {
             _context = context;
             _mapper = mapper;
+            _vehicleRepo = vehicleRepo; // Initialize the IVehicle repository
         }
 
 
         //***********************************************************************************************************************
         // GET: VehicleViewModels
+        [Route("allvehicles")]
         public async Task<IActionResult> Index()
         {
-            var vehicles = await _context.VehicleSet.ToListAsync();
-            var vmList = _mapper.Map<List<VehicleViewModel>>(vehicles);
-            return View(vmList);
+            var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); //hämtar alla fordon från databasen genom interface -> repo -> db
+            var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
+            return View("~/Views/VehicleViewModels/Index.cshtml", vehicleVMList); //returnerar VMlistan och skickar till rätt vy i trädet
         }
 
 
@@ -49,7 +53,7 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            return View(vehicleViewModel);
+            return View("~/Views/VehicleViewModels/Details.cshtml", vehicleViewModel); //returnerar vy i trädet + detaljerna för fordonet
         }
 
 
