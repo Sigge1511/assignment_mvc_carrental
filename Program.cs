@@ -11,7 +11,7 @@ namespace assignment_mvc_carrental
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
+            // Add services 
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
@@ -21,15 +21,22 @@ namespace assignment_mvc_carrental
                 .AddEntityFrameworkStores<ApplicationDbContext>();
             builder.Services.AddControllersWithViews();
 
+            //**************    MAPPER  **********************************************************************
+
             builder.Services.AddAutoMapper(typeof(MappingProfile)); //mappning mellan klasser och VMs
+
+
+
+            //************ LÄGG TILL ALLA REPOS HÄR   *****************************************************************
             builder.Services.AddScoped<IVehicle, VehicleRepo>();
+            builder.Services.AddScoped<IBooking, BookingRepo>();
 
 
 
-
+            //*************************************************************************************************
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
+
             if (app.Environment.IsDevelopment())
             {
                 app.UseMigrationsEndPoint();

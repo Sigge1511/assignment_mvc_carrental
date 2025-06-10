@@ -4,28 +4,28 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>All reservations</h1>
 
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="links" asp-action="Create">Create new reservation</a>
 </p>
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.VehicleId)
+                Vehicle:
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.CustomerId)
+                Customer:
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.StartDate)
+                Start:
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.EndDate)
+                End:
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.TotalPrice)
+                Total price:
             </th>
             <th></th>
         </tr>

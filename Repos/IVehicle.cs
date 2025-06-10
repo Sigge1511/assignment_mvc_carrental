@@ -6,8 +6,8 @@ namespace assignment_mvc_carrental.Repos
     {
         Task<List<Vehicle>> GetAllVehiclesAsync();
         Task<Vehicle> GetVehicleByIDAsync(int vehicleId);
-        void UpdateVehicleAsync(Vehicle vehicle);
-        void DeleteVehicleAsync(int vehicleId);
-        void SaveVehicleAsync();
+        Task<Vehicle> UpdateVehicleAsync(Vehicle vehicle);
+        Task DeleteVehicleAsync(Vehicle vehicle);
+        Task<Vehicle> AddVehicleAsync(Vehicle vehicle);
     }
 }

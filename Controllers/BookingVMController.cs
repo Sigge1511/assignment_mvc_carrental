@@ -1,29 +1,44 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using assignment_mvc_carrental.Data;
+using assignment_mvc_carrental.Models;
+using assignment_mvc_carrental.Repos;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using assignment_mvc_carrental.Data;
-using assignment_mvc_carrental.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace assignment_mvc_carrental.Controllers
 {
     public class BookingVMController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IBooking _bookingRepo;
 
-        public BookingVMController(ApplicationDbContext context)
+        public BookingVMController(ApplicationDbContext context, IMapper mapper, IBooking bookingRepo)
         {
             _context = context;
+            _mapper = mapper;
+            _bookingRepo = bookingRepo;
         }
+        //***********************************************************************************************************************
 
         // GET: BookingVM
         public async Task<IActionResult> Index()
         {
-            return View(await _context.BookingSet.ToListAsync());
+            var bookings = await _bookingRepo.GetAllBookingsAsync(); //hämtar alla från repo
+            var bookingVMList = _mapper.Map<List<BookingViewModel>>(bookings);
+            return View("~/Views/BookingVM/Index.cshtml", bookingVMList);
         }
+
+        //var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); //hämtar alla fordon från databasen genom interface -> repo -> db
+        //var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
+        //    return View("~/Views/VehicleViewModels/Index.cshtml", vehicleVMList); //returnerar VMlistan och skickar till rätt vy i trädet
+        //***********************************************************************************************************************
+
 
         // GET: BookingVM/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -42,6 +57,7 @@ namespace assignment_mvc_carrental.Controllers
 
             return View(bookingViewModel);
         }
+        //***********************************************************************************************************************
 
         // GET: BookingVM/Create
         public IActionResult Create()
@@ -64,6 +80,7 @@ namespace assignment_mvc_carrental.Controllers
             }
             return View(bookingViewModel);
         }
+        //***********************************************************************************************************************
 
         // GET: BookingVM/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -115,6 +132,7 @@ namespace assignment_mvc_carrental.Controllers
             }
             return View(bookingViewModel);
         }
+        //***********************************************************************************************************************
 
         // GET: BookingVM/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -148,6 +166,7 @@ namespace assignment_mvc_carrental.Controllers
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
+        //***********************************************************************************************************************
 
         private bool BookingViewModelExists(int id)
         {
