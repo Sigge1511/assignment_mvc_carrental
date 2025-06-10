@@ -1,5 +1,6 @@
 ﻿using assignment_mvc_carrental.Classes;
 using assignment_mvc_carrental.Data;
+using assignment_mvc_carrental.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace assignment_mvc_carrental.Repos
@@ -29,7 +30,25 @@ namespace assignment_mvc_carrental.Repos
         //*************************************************************************************************
         public async Task<Booking> GetBookingByIDAsync(int bookingId)
         {
-            return await _context.BookingSet.FirstOrDefaultAsync(v => v.Id == bookingId);
+            return await _context.BookingSet
+                    .Where(b => b.Id == bookingId)
+                    .Select(b => new BookingViewModel
+                    {
+                        Id = b.Id,
+                        CustomerId = b.CustomerId,
+                        CustomerName = _context.CustomerSet
+                            .Where(c => c.Id == b.CustomerId)
+                            .Select(c => c.FirstName + " " + c.LastName)
+                            .FirstOrDefault(),
+                        VehicleId = b.VehicleId,
+                        VehicleName = _context.VehicleSet
+                            .Where(v => v.Id == b.VehicleId)
+                            .Select(v => v.Title)
+                            .FirstOrDefault(),
+                        StartDate = b.StartDate,
+                        EndDate = b.EndDate
+                    })
+                    .FirstOrDefaultAsync();
         }
         //*************************************************************************************************
         

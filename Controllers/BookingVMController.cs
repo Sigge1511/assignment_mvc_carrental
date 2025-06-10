@@ -1,4 +1,5 @@
-﻿using assignment_mvc_carrental.Data;
+﻿using assignment_mvc_carrental.Classes;
+using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Models;
 using assignment_mvc_carrental.Repos;
 using AutoMapper;
@@ -47,13 +48,16 @@ namespace assignment_mvc_carrental.Controllers
             {
                 return NotFound();
             }
-
-            var bookingViewModel = await _context.BookingSet
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (bookingViewModel == null)
+            var booking = await _bookingRepo.GetBookingByIDAsync(id.Value); //hämtar bokningen med id genom interface -> repo -> db              
+            if (booking == null)
             {
                 return NotFound();
             }
+            var bookingViewModel = new BookingViewModel
+            {
+                
+            }; //mappar bokningen till BookingViewModel och gör om id:n till namn för kund och fordon
+
 
             return View(bookingViewModel);
         }
@@ -61,7 +65,7 @@ namespace assignment_mvc_carrental.Controllers
 
         // GET: BookingVM/Create
         public IActionResult Create()
-        {
+        {            
             return View();
         }
 
@@ -70,15 +74,19 @@ namespace assignment_mvc_carrental.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,VehicleId,CustomerId,StartDate,EndDate,TotalPrice")] BookingViewModel bookingViewModel)
+        public async Task<IActionResult> Create([Bind("Id,VehicleId,CustomerId,StartDate,EndDate")] BookingViewModel bookingViewModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(bookingViewModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var booking = _mapper.Map<Booking>(bookingViewModel); //mappa om till en Booking
+                await _bookingRepo.AddBookingAsync(booking); //skicka till repot
+                
+
+                //************** HA NÅGOT SOM KAN TRIGGA JAVASCRIPT ALERT OM LYCKAD BOKNING???? ***************************************************
+
+                return RedirectToAction("~/Views/BookingVM/Index.cshtml"); //om det funkar kommer man till alla bokningar igen
             }
-            return View(bookingViewModel);
+            return View(bookingViewModel); //om det inte funkar stannar man på createsidan
         }
         //***********************************************************************************************************************
 

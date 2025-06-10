@@ -3,49 +3,44 @@
 @{
     ViewData["Title"] = "Create";
 }
-
-<h1>Create</h1>
-
-<h4>BookingViewModel</h4>
+<br>
+<h3>New reservation</h3>
 <hr />
 <div class="row">
     <div class="col-md-4">
         <form asp-action="Create">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
-                <label asp-for="VehicleId" class="control-label"></label>
+                <label asp-for="VehicleId" class="control-label">Vehicle</label>
                 <input asp-for="VehicleId" class="form-control" />
                 <span asp-validation-for="VehicleId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="CustomerId" class="control-label"></label>
+                <label asp-for="CustomerId" class="control-label">Customer</label>
                 <input asp-for="CustomerId" class="form-control" />
                 <span asp-validation-for="CustomerId" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="StartDate" class="control-label"></label>
-                <input asp-for="StartDate" class="form-control" />
+                <label asp-for="StartDate" class="control-label">Start</label>
+                <input asp-for="StartDate" class="form-control" type="date" />
                 <span asp-validation-for="StartDate" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="EndDate" class="control-label"></label>
-                <input asp-for="EndDate" class="form-control" />
+                <label asp-for="EndDate" class="control-label">End</label>
+                <input asp-for="EndDate" class="form-control" type="date" />
                 <span asp-validation-for="EndDate" class="text-danger"></span>
             </div>
+            <br>
             <div class="form-group">
-                <label asp-for="TotalPrice" class="control-label"></label>
-                <input asp-for="TotalPrice" class="form-control" />
-                <span asp-validation-for="TotalPrice" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+                <input type="submit" value="Add" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
+<br>
+<br>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="links" asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

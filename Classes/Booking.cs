@@ -15,11 +15,11 @@ namespace assignment_mvc_carrental.Classes
 
 
         [Required(ErrorMessage = "Start date is required.")]
-        public DateTime StartDate { get; set; }
+        public DateOnly StartDate { get; set; }
 
 
         [Required(ErrorMessage = "End date is required.")]
-        public DateTime EndDate { get; set; }
+        public DateOnly EndDate { get; set; }
 
 
         public double TotalPrice { get; set; } = 0.0;

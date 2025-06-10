@@ -11,7 +11,8 @@ namespace assignment_mvc_carrental.Data
         {
             CreateMap<VehicleViewModel, Vehicle>().ReverseMap();
             CreateMap<Vehicle, VehicleViewModel>().ReverseMap();
-
+            CreateMap<BookingViewModel, Booking>().ReverseMap();
+            CreateMap<Booking, BookingViewModel>().ReverseMap();
         }
     }
 }
