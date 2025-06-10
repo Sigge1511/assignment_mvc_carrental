@@ -28,7 +28,7 @@ namespace assignment_mvc_carrental.Repos
             return booking;
         }
         //*************************************************************************************************
-        public async Task<Booking> GetBookingByIDAsync(int bookingId)
+        public async Task<BookingViewModel> GetBookingByIDAsync(int bookingId)
         {
             return await _context.BookingSet
                     .Where(b => b.Id == bookingId)
@@ -46,7 +46,8 @@ namespace assignment_mvc_carrental.Repos
                             .Select(v => v.Title)
                             .FirstOrDefault(),
                         StartDate = b.StartDate,
-                        EndDate = b.EndDate
+                        EndDate = b.EndDate,
+                        TotalPrice = b.TotalPrice
                     })
                     .FirstOrDefaultAsync();
         }

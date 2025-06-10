@@ -48,16 +48,13 @@ namespace assignment_mvc_carrental.Controllers
             {
                 return NotFound();
             }
-            var booking = await _bookingRepo.GetBookingByIDAsync(id.Value); //hämtar bokningen med id genom interface -> repo -> db              
-            if (booking == null)
+
+            var bookingViewModel = await _bookingRepo.GetBookingByIDAsync(id.Value);
+
+            if (bookingViewModel == null)
             {
                 return NotFound();
             }
-            var bookingViewModel = new BookingViewModel
-            {
-                
-            }; //mappar bokningen till BookingViewModel och gör om id:n till namn för kund och fordon
-
 
             return View(bookingViewModel);
         }
