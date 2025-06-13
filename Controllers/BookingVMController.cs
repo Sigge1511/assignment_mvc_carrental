@@ -66,12 +66,14 @@ namespace assignment_mvc_carrental.Controllers
         //***********************************************************************************************************************
 
         // GET: BookingVM/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(int? vehicleId)
         {
             var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); //hämtar alla fordon från databasen genom interface -> repo -> db
             var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
 
             ViewBag.VehicleList = vehicleVMList; //skickar med fordonen till vyn som en ViewBag
+
+            ViewBag.SelectedVehicleId = vehicleId;            // kan vara null om inget skickas med
 
             return View();
         }
@@ -100,12 +102,20 @@ namespace assignment_mvc_carrental.Controllers
         // GET: BookingVM/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
+            //hämtar alla fordon för att ha dropdown-meny från databasen genom interface -> repo -> db
+            var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); 
+            var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
+
+            ViewBag.VehicleList = vehicleVMList; //skickar med VM-fordonslista till vyn som en ViewBag
+            ViewBag.SelectedVehicleId = id;      // skickar med id på förvalt fordon
+
+
             if (id == null)
             {
                 return NotFound();
             }
 
-            var bookingViewModel = await _context.BookingSet.FindAsync(id);
+            var bookingViewModel = await _bookingRepo.GetBookingByIDAsync(id.Value);
             if (bookingViewModel == null)
             {
                 return NotFound();
@@ -113,10 +123,11 @@ namespace assignment_mvc_carrental.Controllers
             return View(bookingViewModel);
         }
 
-        // POST: BookingVM/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
+
+// POST: BookingVM/Edit/5
+// To protect from overposting attacks, enable the specific properties you want to bind to.
+// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+[HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,VehicleId,CustomerId,StartDate,EndDate,TotalPrice")] BookingViewModel bookingViewModel)
         {

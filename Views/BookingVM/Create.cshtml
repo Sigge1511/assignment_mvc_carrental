@@ -2,107 +2,119 @@
 
 @{
     ViewData["Title"] = "Create";
+    var vehicles = ViewBag.VehicleList as List<VehicleViewModel>;
+    var selectedId = ViewBag.SelectedVehicleId as int?;
 }
 <br>
 <h3>New reservation</h3>
 <hr />
-
-<div id="vehicleImageContainer" style="margin-bottom:15px; max-width: 60%;"></div> @* visar bild på fordonet mha js när ett val gjorts i dropdown *@
+<div id="vehicleImageContainer" style="margin:15px 0; max-width: 60%;"></div>
 <br>
 <br>
 <form asp-action="Create" method="post">
     <div class="form-group">
-        <label for="VehicleId">Välj fordon </label>
-        <select id="VehicleId" name="VehicleId" class="form-control" onchange="updateVehicle()">
-            <option value="" disabled selected>---</option>
-            @foreach (var vehicle in ViewBag.VehicleList as List<VehicleViewModel>)
+        <label for="VehicleId">Select vehicle</label>
+        <select id="VehicleId" name="VehicleId" class="form-control" onchange="onVehicleChange()">
+            @if (selectedId == null)
             {
-                @* All denna info väljs i POST & åt js men bara TITLE syns utåt *@
-                <option value="@vehicle.Id" data-price="@vehicle.PricePerDay" data-imageurl="@vehicle.ImageUrl1">@vehicle.Title</option>
+                @Html.Raw("<option value=\"\" disabled selected>---</option>")
             }
-        </select><br>
-        <p>Pris per dag: <span id="pricePerDay">-</span> SEK</p> @* hämtar mha js och visar fordonets pris per dag *@
-            
-        <div class="form-group">
-            <label asp-for="CustomerFirstName" class="control-label">FirstName</label>
-            <input asp-for="CustomerFirstName" class="form-control" placeholder="Firstname" />
-            <span asp-validation-for="CustomerFirstName" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="CustomerLastName" class="control-label">LastName</label>
-            <input asp-for="CustomerLastName" class="form-control" placeholder="Lastname" />
-            <span asp-validation-for="CustomerLastName" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="StartDate" class="control-label">Start</label>
-            <input asp-for="StartDate" class="form-control" type="date" />
-            <span asp-validation-for="StartDate" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label asp-for="EndDate" class="control-label">End</label>
-            <input asp-for="EndDate" class="form-control" type="date" />
-            <span asp-validation-for="EndDate" class="text-danger"></span>
-        </div>
-        <br>
-        <p>Totalpris: <span id="totalPrice">-</span> SEK</p> @* räknar ut mha js och visar totala priset för bokningen *@
+            else
+            {
+                @Html.Raw("<option value=\"\" disabled>---</option>")
+            }
 
-
-        <button type="submit" class="btn btn-primary">Skapa bokning</button>
+            @foreach (var vehicle in vehicles)
+            {
+                var isSelected = selectedId.HasValue && vehicle.Id == selectedId.Value;
+                var selectedAttr = isSelected ? " selected" : "";
+                var optionHtml = $"<option value=\"{vehicle.Id}\" data-price=\"{vehicle.PricePerDay}\" data-imageurl=\"{vehicle.ImageUrl1}\"{selectedAttr}>{vehicle.Title}</option>";
+                @Html.Raw(optionHtml)
+            }
+        </select>
     </div>
+    <br>
+    <p>Price per day: <span id="pricePerDay">-</span> SEK</p>
+
+    <div class="form-group">
+        <label asp-for="CustomerFirstName" class="control-label">Firstname</label>
+        <input asp-for="CustomerFirstName" class="form-control" placeholder="Förnamn" />
+        <span asp-validation-for="CustomerFirstName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="CustomerLastName" class="control-label">Lastname</label>
+        <input asp-for="CustomerLastName" class="form-control" placeholder="Efternamn" />
+        <span asp-validation-for="CustomerLastName" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label">Pick up</label>
+        <input asp-for="StartDate" type="date" class="form-control" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label">Drop off</label>
+        <input asp-for="EndDate" type="date" class="form-control" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+    <br>
+    <p>Total price: <span id="totalPrice">-</span> SEK</p><br><br>
+    <button type="submit" class="btn btn-primary">Add reservation</button>
 </form>
 
-<script>
-    function updatePrice() {
-        const select = document.getElementById("VehicleId");
-        const pricePerDay = parseFloat(select.options[select.selectedIndex].dataset.price) || 0;
-        document.getElementById("pricePerDay").innerText = pricePerDay.toFixed(2);
 
-        const startDate = new Date(document.getElementById("StartDate").value);
-        const endDate = new Date(document.getElementById("EndDate").value);
-        let total = "-";
 
-        if (startDate && endDate && endDate >= startDate) {
-            const diffTime = endDate - startDate;
-            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // inkl båda dagarna
-            total = (diffDays * pricePerDay).toFixed(2);
-        }
 
-        document.getElementById("totalPrice").innerText = total;
-    }
-
-    function updateVehicle() {
-        const select = document.getElementById("VehicleId");
-        const selectedOption = select.options[select.selectedIndex];
-        const imageUrl = selectedOption.dataset.imageurl || "";
-
-        // Uppdatera pris också när fordon byts
-        updatePrice();
-
-        const container = document.getElementById("vehicleImageContainer");
-        if (imageUrl) {
-            container.innerHTML = `<img src="${imageUrl}" alt="Valt fordon" style="max-width: 100%; height: auto; border-radius: 8px;" />`;
-        } else {
-            container.innerHTML = ""; // töm om ingen bild
-        }
-    }
-
-    // Kör updateVehicle när man byter fordon
-    document.getElementById("VehicleId").addEventListener("change", updateVehicle);
-
-    // Kör updatePrice när man ändrar datum
-    document.getElementById("StartDate").addEventListener("change", updatePrice);
-    document.getElementById("EndDate").addEventListener("change", updatePrice);
-
-    // Kör updateVehicle på sida load för att visa första fordonet och pris
-    window.onload = updateVehicle;
-</script>
-
-<br>
-<br>
-<div>
-    <a class="links" asp-action="Index">Back to List</a>
-</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    <script>
+        function onVehicleChange() {
+            updatePrice();
+            updateVehicleImage();
+        }
+
+        function updatePrice() {
+            const select = document.getElementById("VehicleId");
+            if (!select || select.selectedIndex < 0) return;
+
+            const selectedOption = select.options[select.selectedIndex];
+            const pricePerDay = selectedOption.dataset.price || "-";
+            document.getElementById("pricePerDay").innerText = pricePerDay;
+
+            const startInput = document.getElementById("StartDate");
+            const endInput = document.getElementById("EndDate");
+            const startDate = new Date(startInput.value);
+            const endDate = new Date(endInput.value);
+            let total = "-";
+
+            if (startInput.value && endInput.value && endDate >= startDate) {
+                const diffTime = Math.abs(endDate - startDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                total = diffDays * pricePerDay;
+            }
+
+            document.getElementById("totalPrice").innerText = total;
+        }
+
+        function updateVehicleImage() {
+            const select = document.getElementById("VehicleId");
+            const selectedOption = select.options[select.selectedIndex];
+            const imageUrl = selectedOption.dataset.imageurl;
+
+            const container = document.getElementById("vehicleImageContainer");
+            if (imageUrl) {
+                container.innerHTML = `<img src="${imageUrl}" alt="Valt fordon" style="max-width: 100%; height: auto; border-radius: 8px;" />`;
+            } else {
+                container.innerHTML = "";
+            }
+        }
+
+        window.onload = function () {
+            onVehicleChange();
+            document.getElementById("StartDate").addEventListener("change", updatePrice);
+            document.getElementById("EndDate").addEventListener("change", updatePrice);
+        };
+    </script>
 }

@@ -12,11 +12,20 @@ namespace assignment_mvc_carrental.Models
         public int VehicleId { get; set; }
         [Required(ErrorMessage = "Customer ID is required.")]
 
-        public string CustomerFirstName { get; set; } = ""; 
-        public string CustomerLastName { get; set; } = ""; 
 
 
         public int CustomerId { get; set; }
+
+        [Required(ErrorMessage = "Firstname is required.")]
+        public string CustomerFirstName { get; set; } = "";
+
+        [Required(ErrorMessage = "Lastname is required.")]
+        public string CustomerLastName { get; set; } = ""; 
+
+
+        
+
+
         [Required(ErrorMessage = "Start date is required.")]
         public DateOnly StartDate { get; set; }
         [Required(ErrorMessage = "End date is required.")]
