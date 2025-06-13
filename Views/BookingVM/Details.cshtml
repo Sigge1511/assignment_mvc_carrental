@@ -9,13 +9,12 @@
 
 <div>
     <hr />
-    <p><strong>Kund:</strong> @Model.CustomerName</p>
-    <p><strong>Fordon:</strong> @Model.VehicleName</p>
-    <p><strong>Hämtning:</strong> @Model.StartDate</p>
-    <p><strong>Återlämning:</strong> @Model.EndDate</p>
-    <p><strong>Totalpris:</strong> @Model.TotalPrice</p>
-@*     <p><strong>Bokningsdatum:</strong> @Model.BookingDate.ToString("yyyy-MM-dd")</p>
- *@        
+    <p><strong>Customer:</strong> @Model.CustomerFirstName @Model.CustomerLastName</p>
+    <p><strong>Vehicle:</strong> @Model.VehicleName</p>
+    <p><strong>Pick up:</strong> @Model.StartDate</p>
+    <p><strong>Drop off:</strong> @Model.EndDate</p>
+    <p><strong>Total price:</strong> @Model.TotalPrice</p>
+       
 </div>
 <div>
     <a class="links" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |

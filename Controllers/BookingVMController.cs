@@ -18,13 +18,18 @@ namespace assignment_mvc_carrental.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IBooking _bookingRepo;
+        private readonly IVehicle _vehicleRepo;
 
-        public BookingVMController(ApplicationDbContext context, IMapper mapper, IBooking bookingRepo)
+
+        public BookingVMController(ApplicationDbContext context, IMapper mapper, IBooking bookingRepo, IVehicle vehicleRep)
         {
             _context = context;
             _mapper = mapper;
             _bookingRepo = bookingRepo;
+            _vehicleRepo = vehicleRep;
         }
+
+
         //***********************************************************************************************************************
 
         // GET: BookingVM
@@ -61,8 +66,13 @@ namespace assignment_mvc_carrental.Controllers
         //***********************************************************************************************************************
 
         // GET: BookingVM/Create
-        public IActionResult Create()
-        {            
+        public async Task<IActionResult> Create()
+        {
+            var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); //hämtar alla fordon från databasen genom interface -> repo -> db
+            var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
+
+            ViewBag.VehicleList = vehicleVMList; //skickar med fordonen till vyn som en ViewBag
+
             return View();
         }
 

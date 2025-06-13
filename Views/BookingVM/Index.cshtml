@@ -31,29 +31,30 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.VehicleId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CustomerId)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.TotalPrice) kronor
-            </td>
-            <td>
-                <a class="links" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                <a class="links" asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                <a class="links" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model) 
+        {
+           <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.VehicleId)
+                </td>
+                <td>
+                    @($"{item.CustomerFirstName} {item.CustomerLastName}")
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.TotalPrice) SEK
+                </td>
+                <td>
+                    <a class="links" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                    <a class="links" asp-action="Details" asp-route-id="@item.Id">Details</a> |
+                    <a class="links" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                </td>
+           </tr>
+        }
     </tbody>
 </table>
