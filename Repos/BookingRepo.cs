@@ -21,7 +21,7 @@ namespace assignment_mvc_carrental.Repos
             return await _context.BookingSet.ToListAsync();
         }
         //*************************************************************************************************
-        public async Task<Booking> AddBookingAsync(Booking booking)
+        public async Task<Booking> AddBookingAsync(Booking booking) //FIXA DENNA SEN
         {
             await _context.BookingSet.AddAsync(booking);
             await _context.SaveChangesAsync();
@@ -45,7 +45,7 @@ namespace assignment_mvc_carrental.Repos
                         .Select(c => c.LastName)
                         .FirstOrDefault(),
                     VehicleId = b.VehicleId,
-                    VehicleName = _context.VehicleSet
+                    VehicleTitle = _context.VehicleSet
                         .Where(v => v.Id == b.VehicleId)
                         .Select(v => v.Title)
                         .FirstOrDefault(),
@@ -57,16 +57,20 @@ namespace assignment_mvc_carrental.Repos
         }
         //*************************************************************************************************
         
-        public async Task<Booking> UpdateBookingAsync(Booking booking)
+        public async Task<Booking> UpdateBookingAsync(Booking booking) //FIXA DENNA SEN
         {
             _context.BookingSet.Update(booking); // Update the vehicle in the context
             await _context.SaveChangesAsync(); // Save changes to the database
             return booking;
         }
         //*************************************************************************************************
-        public async Task DeleteBookingAsync(Booking booking)
+        public async Task DeleteBookingAsync(int? bookingId)
         {
-            _context.BookingSet.Remove(booking);
+            Booking booking = await _context.BookingSet
+                .Where(b => b.Id == bookingId)
+                .FirstOrDefaultAsync();
+            _context.BookingSet
+                .Remove(booking);
             await _context.SaveChangesAsync();
         }        
     }

@@ -5,19 +5,21 @@ namespace assignment_mvc_carrental.Models
     public class BookingViewModel
     {
         public int Id { get; set; }
+        public string VehicleTitle { get; set; } = "";
+
+
         [Required(ErrorMessage = "Vehicle ID is required.")]
-
-        public string VehicleName { get; set; } = ""; // Changed to string to hold vehicle title
-
         public int VehicleId { get; set; }
+
+
         [Required(ErrorMessage = "Customer ID is required.")]
-
-
-
         public int CustomerId { get; set; }
+
 
         [Required(ErrorMessage = "Firstname is required.")]
         public string CustomerFirstName { get; set; } = "";
+
+
 
         [Required(ErrorMessage = "Lastname is required.")]
         public string CustomerLastName { get; set; } = ""; 

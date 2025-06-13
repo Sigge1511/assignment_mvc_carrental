@@ -8,7 +8,7 @@ namespace assignment_mvc_carrental.Repos
         Task<List<Booking>> GetAllBookingsAsync();
         Task<BookingViewModel> GetBookingByIDAsync(int bookingId);
         Task<Booking> UpdateBookingAsync(Booking booking);
-        Task DeleteBookingAsync(Booking booking);
+        Task DeleteBookingAsync(int? bookingId);
         Task<Booking> AddBookingAsync(Booking booking);
     }
 }

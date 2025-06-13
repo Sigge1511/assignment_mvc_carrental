@@ -3,6 +3,15 @@
 @{
     ViewData["Title"] = "Index";
 }
+
+@* Notis om man kommer hit efter att man har raderat en bokning*@
+@if (TempData["SuccessMessage"] != null) 
+{
+    <div class="alert alert-success">
+        @TempData["SuccessMessage"]
+    </div>
+}
+
 <br>
 <h1>Our premium vehicles</h1>
 

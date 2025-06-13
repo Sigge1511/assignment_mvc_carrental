@@ -30,7 +30,7 @@ namespace assignment_mvc_carrental.Controllers
         }
 
 
-        //***********************************************************************************************************************
+//***********************************************************************************************************************
 
         // GET: BookingVM
         public async Task<IActionResult> Index()
@@ -40,10 +40,9 @@ namespace assignment_mvc_carrental.Controllers
             return View("~/Views/BookingVM/Index.cshtml", bookingVMList);
         }
 
-        //var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); //hämtar alla fordon från databasen genom interface -> repo -> db
-        //var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
-        //    return View("~/Views/VehicleViewModels/Index.cshtml", vehicleVMList); //returnerar VMlistan och skickar till rätt vy i trädet
-        //***********************************************************************************************************************
+
+
+//***********************************************************************************************************************
 
 
         // GET: BookingVM/Details/5
@@ -63,7 +62,10 @@ namespace assignment_mvc_carrental.Controllers
 
             return View(bookingViewModel);
         }
-        //***********************************************************************************************************************
+
+
+
+ //***********************************************************************************************************************
 
         // GET: BookingVM/Create
         public async Task<IActionResult> Create(int? vehicleId)
@@ -97,7 +99,10 @@ namespace assignment_mvc_carrental.Controllers
             }
             return View(bookingViewModel); //om det inte funkar stannar man på createsidan
         }
-        //***********************************************************************************************************************
+
+
+
+//***********************************************************************************************************************
 
         // GET: BookingVM/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -124,11 +129,11 @@ namespace assignment_mvc_carrental.Controllers
         }
 
 
-// POST: BookingVM/Edit/5
-// To protect from overposting attacks, enable the specific properties you want to bind to.
-// For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-[HttpPost]
-        [ValidateAntiForgeryToken]
+        // POST: BookingVM/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]          //DENNA MÅSTE FIXAS SEN
         public async Task<IActionResult> Edit(int id, [Bind("Id,VehicleId,CustomerId,StartDate,EndDate,TotalPrice")] BookingViewModel bookingViewModel)
         {
             if (id != bookingViewModel.Id)
@@ -158,7 +163,10 @@ namespace assignment_mvc_carrental.Controllers
             }
             return View(bookingViewModel);
         }
-        //***********************************************************************************************************************
+
+
+
+//***********************************************************************************************************************
 
         // GET: BookingVM/Delete/5
         public async Task<IActionResult> Delete(int? id)
@@ -168,8 +176,8 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var bookingViewModel = await _context.BookingSet
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var bookingViewModel = await _bookingRepo.GetBookingByIDAsync(id.Value);
+
             if (bookingViewModel == null)
             {
                 return NotFound();
@@ -179,19 +187,37 @@ namespace assignment_mvc_carrental.Controllers
         }
 
         // POST: BookingVM/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
-        {
-            var bookingViewModel = await _context.BookingSet.FindAsync(id);
-            if (bookingViewModel != null)
+        public async Task<IActionResult> DeleteBooking(int bookingId)
+        {            
+            try
             {
-                _context.BookingSet.Remove(bookingViewModel);
-            }
+                await _bookingRepo.DeleteBookingAsync(bookingId);
+                TempData["SuccessMessage"] = "Reservation successfully deleted"; //skickar med en notis att bokningen är raderad
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "VehicleVM");
+            }
+            catch (Exception)
+            {
+                //försök hitta bokningen igen så vi kan behålla rätt objekt i deletevyn när den laddas om
+                var booking = await _bookingRepo.GetBookingByIDAsync(bookingId); 
+                var bookingVM = _mapper.Map<BookingViewModel>(booking);         //mappa om till VM
+
+
+                var errorViewModel = new ErrorViewModel();
+
+                if (booking == null)
+                {
+                    // Om nått är megatokigt – visa en generell felvy
+                    return View("Error", errorViewModel); 
+                }
+                // Annars – visa Delete-vyn igen med bokningen kvar
+                return View("Delete", bookingVM);
+            }
         }
+
+
         //***********************************************************************************************************************
 
         private bool BookingViewModelExists(int id)

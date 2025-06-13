@@ -17,7 +17,7 @@
     <input type="hidden" asp-for="Id" />
     <div>        
         <p><strong>Customer:</strong> @Model.CustomerFirstName @Model.CustomerLastName</p>
-        <p><strong>Vehicle:</strong> @Model.VehicleName</p>
+        <p><strong>Vehicle:</strong> @Model.VehicleTitle</p>
         <p><strong>Pick up:</strong> @Model.StartDate</p>
         <p><strong>Drop off:</strong> @Model.EndDate</p>
         <p><strong>Total price:</strong> @Model.TotalPrice</p>
@@ -60,7 +60,7 @@
             </div>
 
         <div class="form-group">
-            <label asp-for="CustomerLastName" class="control-label">@Model.VehicleName</label>
+            <label asp-for="CustomerLastName" class="control-label">@Model.VehicleTitle</label>
             <input asp-for="CustomerLastName" class="form-control" placeholder="@Model.CustomerFirstName @Model.CustomerLastName" />
             <span asp-validation-for="CustomerLastName" class="text-danger"></span>
         </div>
