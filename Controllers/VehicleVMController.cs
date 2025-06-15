@@ -1,14 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using assignment_mvc_carrental.Classes;
+using assignment_mvc_carrental.Data;
+using assignment_mvc_carrental.Models;
+using assignment_mvc_carrental.Repos;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using assignment_mvc_carrental.Data;
-using assignment_mvc_carrental.Models;
-using AutoMapper;
-using assignment_mvc_carrental.Repos;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace assignment_mvc_carrental.Controllers
 {
@@ -22,7 +23,7 @@ namespace assignment_mvc_carrental.Controllers
         {
             _context = context;
             _mapper = mapper;
-            _vehicleRepo = vehicleRepo; // Initialize the IVehicle repository
+            _vehicleRepo = vehicleRepo; 
         }
 
 
@@ -61,11 +62,12 @@ namespace assignment_mvc_carrental.Controllers
         }
 
 
+
         //***********************************************************************************************************************
         // GET: VehicleViewModels/Create
         public IActionResult Create() //ha controll för om user är admin här??
         {
-            return View();
+            return View("~/Views/VehicleViewModels/Create.cshtml");
         }
 
         // POST: VehicleViewModels/Create
@@ -74,15 +76,26 @@ namespace assignment_mvc_carrental.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Year,PricePerDay,IsAvailable,Description,ImageUrl1,ImageUrl2")] VehicleViewModel vehicleViewModel)
-        {
+        {            
             if (ModelState.IsValid)
             {
-                _context.Add(vehicleViewModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                try
+                {
+                    var vehicle = _mapper.Map<Vehicle>(vehicleViewModel); //mappa om till en Vehicle
+                    await _vehicleRepo.AddVehicleAsync(vehicle);
+                    TempData["SuccessMessage"] = "Vehicle successfully created!";
+
+                    return RedirectToAction("~/Views/VehicleViewModels/Index.cshtml"); //om det funkar kommer man tillbaka till alla fordon
+                }
+                catch (Exception)
+                {
+                    TempData["SuccessMessage"] = "An error occured, please try again!";
+                }
+
             }
-            return View(vehicleViewModel);
+            return View(vehicleViewModel); //om det inte funkar så stanna på sidan
         }
+
 
 
         //***********************************************************************************************************************
@@ -94,13 +107,16 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var vehicleViewModel = await _context.VehicleSet.FindAsync(id);
+            var vehicle = await _vehicleRepo.GetVehicleByIDAsync(id.Value);
+            var vehicleViewModel = _mapper.Map<VehicleViewModel>(vehicle); //mappar fordonet till VehicleViewModel
+
             if (vehicleViewModel == null)
             {
                 return NotFound();
             }
-            return View(vehicleViewModel);
+            return View("~/Views/VehicleViewModels/Edit.cshtml", vehicleViewModel);
         }
+
 
         // POST: VehicleViewModels/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
@@ -117,9 +133,12 @@ namespace assignment_mvc_carrental.Controllers
             if (ModelState.IsValid)
             {
                 try
-                {
-                    _context.Update(vehicleViewModel);
-                    await _context.SaveChangesAsync();
+                {                    
+                    
+                    await _vehicleRepo.UpdateVehicleAsync(vehicleViewModel);
+
+                    TempData["SuccessMessage"] = "Vehicle successfully updated!";
+
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -127,16 +146,13 @@ namespace assignment_mvc_carrental.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+                    TempData["SuccessMessage"] = "An error occured, please try again!";
                 }
                 return RedirectToAction(nameof(Index));
             }
             return View(vehicleViewModel);
         }
-
+        
 
         //***********************************************************************************************************************
         // GET: VehicleViewModels/Delete/5
@@ -147,34 +163,54 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
-            var vehicleViewModel = await _context.VehicleSet
-                .FirstOrDefaultAsync(m => m.Id == id);
+            var vehicle = await _vehicleRepo.GetVehicleByIDAsync(id.Value); //hämtar fordonet med id genom interface -> repo -> db
+            var vehicleViewModel = _mapper.Map<VehicleViewModel>(vehicle); //mappar fordonet till VehicleViewModel
+
             if (vehicleViewModel == null)
             {
                 return NotFound();
             }
 
-            return View(vehicleViewModel);
+            return View("~/Views/VehicleViewModels/Delete.cshtml", vehicleViewModel);
         }
 
         // POST: VehicleViewModels/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteVehicle(int id)
         {
-            var vehicleViewModel = await _context.VehicleSet.FindAsync(id);
-            if (vehicleViewModel != null)
+            try
             {
-                _context.VehicleSet.Remove(vehicleViewModel);
+                var vehicle = await _vehicleRepo.GetVehicleByIDAsync(id); //hämtar fordonet med id genom interface -> repo -> db
+                if (vehicle == null)
+                {
+                    return NotFound();
+                }
+                await _vehicleRepo.DeleteVehicleAsync(id); //anropar repo för att radera fordonet
+                TempData["SuccessMessage"] = "Vehicle successfully deleted"; //skickar med en notis att fordonet är raderat
+                return RedirectToAction("Index", "VehicleVM");
             }
+            catch (Exception)
+            {
+                var vehicle = await _vehicleRepo.GetVehicleByIDAsync(id);
+                var vehicleVM = _mapper.Map<BookingViewModel>(vehicle);         //mappa om till VM
 
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+                var errorViewModel = new ErrorViewModel(); //den vill tydligen ha en sån när man skickar till Error-vyn
+                if (vehicleVM == null)
+                {
+                    // Om nått är megatokigt – visa en generell felvy
+                    return View("Error", errorViewModel);
+                }
+                TempData["SuccessMessage"] = "An error occured, please try again!";
+                return View("Delete", vehicleVM);
+            }
         }
 
 
-        //***********************************************************************************************************************
-        private bool VehicleViewModelExists(int id)
+
+
+//***********************************************************************************************************************
+private bool VehicleViewModelExists(int id)
         {
             return _context.VehicleSet.Any(e => e.Id == id);
         }

@@ -3,21 +3,12 @@
 @{
     ViewData["Title"] = "Index";
 }
-
-@* Notis om man kommer hit efter att man har raderat en bokning*@
-@if (TempData["SuccessMessage"] != null) 
-{
-    <div class="alert alert-success">
-        @TempData["SuccessMessage"]
-    </div>
-}
-
 <br>
 <h1>Our premium vehicles</h1>
 
-@* <p>
-    <a asp-action="Create">Create New</a>  //Endast för admin?
-</p> *@
+<p>
+    <a class="links" asp-action="Create">Add new vehicle</a>             @* //Endast för admin? *@
+</p>
 <table class="table">
     <thead>
         <tr>
@@ -39,13 +30,6 @@
             <th>
                 @Html.DisplayNameFor(model => model.Description)
             </th>
-          @*   <th>
-                @Html.DisplayNameFor(model => model.ImageUrl1)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.ImageUrl2)
-            </th> *@
-            <th></th>
         </tr>
     </thead>
     <tbody>
@@ -69,17 +53,11 @@
             <td>
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
-         @*    <td>
-                @Html.DisplayFor(modelItem => item.ImageUrl1)
+            <td>
+                <a class="links" asp-action="Edit" asp-route-id="@item.Id">Edit</a>              @* Bara för admin?? *@
+                <a class="links" asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                <a class="links" asp-action="Delete" asp-route-id="@item.Id">Delete</a>      @* Bara för admin?? *@
             </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.ImageUrl2)
-            </td> *@
-            <td>
-@*                 <a class="links" asp-action="Edit" asp-route-id="@item.Id">Edit</a>          Bara för admin??
- *@                <a class="links" asp-action="Details" asp-route-id="@item.Id">Details</a> 
-@*                 <a class="links" asp-action="Delete" asp-route-id="@item.Id">Delete</a>      Bara för admin??
- *@            </td>
         </tr>
 }
     </tbody>

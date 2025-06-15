@@ -3,10 +3,8 @@
 @{
     ViewData["Title"] = "Edit";
 }
-
+<br>
 <h1>Edit</h1>
-
-<h4>VehicleViewModel</h4>
 <hr />
 <div class="row">
     <div class="col-md-4">
@@ -24,39 +22,42 @@
                 <span asp-validation-for="Year" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="PricePerDay" class="control-label"></label>
+                <label asp-for="PricePerDay" class="control-label">Price per day</label>
                 <input asp-for="PricePerDay" class="form-control" />
                 <span asp-validation-for="PricePerDay" class="text-danger"></span>
             </div>
+            <br>
             <div class="form-group form-check">
                 <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsAvailable" /> @Html.DisplayNameFor(model => model.IsAvailable)
+                    <input class="form-check-input" asp-for="IsAvailable" /> Available
                 </label>
             </div>
+            <br>
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
+                <textarea asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ImageUrl1" class="control-label"></label>
+                <label asp-for="ImageUrl1" class="control-label">Image Url 1</label>
                 <input asp-for="ImageUrl1" class="form-control" />
                 <span asp-validation-for="ImageUrl1" class="text-danger"></span>
             </div>
             <div class="form-group">
-                <label asp-for="ImageUrl2" class="control-label"></label>
+                <label asp-for="ImageUrl2" class="control-label">Image Url 2</label>
                 <input asp-for="ImageUrl2" class="form-control" />
                 <span asp-validation-for="ImageUrl2" class="text-danger"></span>
             </div>
+            <br><br>
             <div class="form-group">
                 <input type="submit" value="Save" class="btn btn-primary" />
             </div>
         </form>
     </div>
 </div>
-
+<br>
 <div>
-    <a asp-action="Index">Back to List</a>
+    <a class="links" asp-action="Index">Back to List</a>
 </div>
 
 @section Scripts {

@@ -91,12 +91,12 @@ namespace assignment_mvc_carrental.Controllers
             {
                 var booking = _mapper.Map<Booking>(bookingViewModel); //mappa om till en Booking
                 await _bookingRepo.AddBookingAsync(booking); //skicka till repot
-                
+                TempData["SuccessMessage"] = "Reservation successfully created!";
 
-                //************** HA NÅGOT SOM KAN TRIGGA JAVASCRIPT ALERT OM LYCKAD BOKNING???? ***************************************************
 
                 return RedirectToAction("~/Views/BookingVM/Index.cshtml"); //om det funkar kommer man till alla bokningar igen
             }
+            TempData["ErrorMessage"] = "An error occurred while creating the reservation. Please try again.";
             return View(bookingViewModel); //om det inte funkar stannar man på createsidan
         }
 
@@ -145,8 +145,8 @@ namespace assignment_mvc_carrental.Controllers
             {
                 try
                 {
-                    _context.Update(bookingViewModel);
-                    await _context.SaveChangesAsync();
+                    await _bookingRepo.UpdateBookingAsync(id);
+                    TempData["SuccessMessage"] = "Reservation successfully updated!";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -154,15 +154,15 @@ namespace assignment_mvc_carrental.Controllers
                     {
                         return NotFound();
                     }
-                    else
-                    {
-                        throw;
-                    }
+
+                    TempData["ErrorMessage"] = "An error occurred while editing the reservation.";
+                    return View(bookingViewModel); // stanna kvar på edit-sidan
                 }
-                return RedirectToAction(nameof(Index));
             }
-            return View(bookingViewModel);
+
+            return View(bookingViewModel); // ModelState is not valid
         }
+       
 
 
 
@@ -205,20 +205,24 @@ namespace assignment_mvc_carrental.Controllers
                 var bookingVM = _mapper.Map<BookingViewModel>(booking);         //mappa om till VM
 
 
-                var errorViewModel = new ErrorViewModel();
+                var errorViewModel = new ErrorViewModel(); //den vill tydligen ha en sån när man skickar till Error-vyn
 
-                if (booking == null)
+                if (bookingVM == null)
                 {
                     // Om nått är megatokigt – visa en generell felvy
                     return View("Error", errorViewModel); 
                 }
                 // Annars – visa Delete-vyn igen med bokningen kvar
+                TempData["ErrorMessage"] = "Could not delete the reservation. Try again.";
+
                 return View("Delete", bookingVM);
             }
         }
 
 
-        //***********************************************************************************************************************
+
+
+//***********************************************************************************************************************
 
         private bool BookingViewModelExists(int id)
         {

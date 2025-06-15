@@ -57,8 +57,11 @@ namespace assignment_mvc_carrental.Repos
         }
         //*************************************************************************************************
         
-        public async Task<Booking> UpdateBookingAsync(Booking booking) //FIXA DENNA SEN
+        public async Task<Booking> UpdateBookingAsync(int id) //FIXA DENNA SEN
         {
+            var booking = await _context.BookingSet
+                .Where(b => b.Id == id)
+                .FirstOrDefaultAsync();
             _context.BookingSet.Update(booking); // Update the vehicle in the context
             await _context.SaveChangesAsync(); // Save changes to the database
             return booking;
