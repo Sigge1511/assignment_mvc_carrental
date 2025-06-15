@@ -47,6 +47,23 @@ body {
     float: right;
 }
 
+
+.btn-primary {
+    background-color: #76ABAE; /* din nya färg */
+    border-color: #76ABAE;
+    font-weight: 600;
+}
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+        background-color: #76ABAE;
+        border-color: #76ABAE;
+    }
+
+
+
+
+
 /* ----------------------------------------------------------------------------------------------------------------------- */
 /* Färga hela navbaren */
 .mynavbar {

@@ -96,6 +96,12 @@ namespace assignment_mvc_carrental.Controllers
 
                 return RedirectToAction("~/Views/BookingVM/Index.cshtml"); //om det funkar kommer man till alla bokningar igen
             }
+            var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); //hämtar alla fordon från databasen genom interface -> repo -> db
+            var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
+
+            ViewBag.VehicleList = vehicleVMList; //skickar med fordonen till vyn som en ViewBag
+
+            ViewBag.SelectedVehicleId = bookingViewModel.Id;            // kan vara null om inget skickas med
             TempData["ErrorMessage"] = "An error occurred while creating the reservation. Please try again.";
             return View(bookingViewModel); //om det inte funkar stannar man på createsidan
         }

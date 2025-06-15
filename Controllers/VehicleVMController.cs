@@ -85,7 +85,7 @@ namespace assignment_mvc_carrental.Controllers
                     await _vehicleRepo.AddVehicleAsync(vehicle);
                     TempData["SuccessMessage"] = "Vehicle successfully created!";
 
-                    return RedirectToAction("~/Views/VehicleViewModels/Index.cshtml"); //om det funkar kommer man tillbaka till alla fordon
+                    return RedirectToAction("Index", "VehicleVM"); //om det funkar kommer man tillbaka till alla fordon
                 }
                 catch (Exception)
                 {

@@ -1,3 +1,4 @@
+using assignment_mvc_carrental.Classes;
 using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Repos;
 using Microsoft.AspNetCore.Identity;
@@ -15,11 +16,23 @@ namespace assignment_mvc_carrental
             var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
+
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>();
+            builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
+                .AddEntityFrameworkStores<ApplicationDbContext>(); //säg vilken class/modell som ska användas för Identity
+
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddMemoryCache(); //Lägg till minnescache för att lagra data i minnet
+
+            builder.Services.AddSession(options => //Lägg till session för att lagra data mellan requests
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(60); //sessionen timeoutar efter 60 minuter
+
+                //options.Cookie.HttpOnly = true; //sessionen är endast tillgänglig via HTTP
+                //options.Cookie.IsEssential = true; //sessionen är nödvändig för applikationen
+            });
 
             //**************    MAPPER  **********************************************************************
 

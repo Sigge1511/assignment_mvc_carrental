@@ -30,7 +30,7 @@ namespace assignment_mvc_carrental.Classes
         [Required(ErrorMessage = "Image URL is required.")]
         public string ImageUrl2 { get; set; } = "";
 
-
+        public ICollection<Booking>? Bookings { get; set; } // lista över bokningar som är kopplade till fordonet
 
 
 

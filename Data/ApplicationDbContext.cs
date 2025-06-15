@@ -4,7 +4,7 @@ using assignment_mvc_carrental.Models;
 
 namespace assignment_mvc_carrental.Data
 {
-    public class ApplicationDbContext : IdentityDbContext
+    public class ApplicationDbContext : IdentityDbContext<User>
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
             : base(options)
@@ -15,5 +15,6 @@ namespace assignment_mvc_carrental.Data
         public DbSet<assignment_mvc_carrental.Classes.Booking> BookingSet { get; set; } = default!;
         public DbSet<assignment_mvc_carrental.Classes.UserRole> UserRoleSet { get; set; } = default!;
         public DbSet<assignment_mvc_carrental.Classes.Admin> AdminSet { get; set; } = default!;
+                    
     }
 }
