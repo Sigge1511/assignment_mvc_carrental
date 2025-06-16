@@ -3,6 +3,8 @@ using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Models;
 using assignment_mvc_carrental.Repos;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -18,12 +20,17 @@ namespace assignment_mvc_carrental.Controllers
         private readonly ApplicationDbContext _context; // dependency för Context
         private readonly IMapper _mapper; // dependency för IMapper
         private readonly IVehicle _vehicleRepo; // dependency för IVehicle
+        private readonly Microsoft.AspNetCore.Identity.UserManager<Models.User> _userManager;
 
-        public VehicleVMController(ApplicationDbContext context, IMapper mapper, IVehicle vehicleRepo)
+        public VehicleVMController(ApplicationDbContext context, 
+                                    IMapper mapper, 
+                                    IVehicle vehicleRepo, 
+                                    UserManager<Models.User> userManager)
         {
             _context = context;
             _mapper = mapper;
-            _vehicleRepo = vehicleRepo; 
+            _vehicleRepo = vehicleRepo;
+            _userManager = userManager;
         }
 
 
@@ -65,6 +72,8 @@ namespace assignment_mvc_carrental.Controllers
 
         //***********************************************************************************************************************
         // GET: VehicleViewModels/Create
+
+        [Authorize(Roles = "Admin")] // Endast admin kan skapa fordon
         public IActionResult Create() //ha controll för om user är admin här??
         {
             return View("~/Views/VehicleViewModels/Create.cshtml");
@@ -73,6 +82,8 @@ namespace assignment_mvc_carrental.Controllers
         // POST: VehicleViewModels/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
+        [Authorize(Roles = "Admin")] // Endast admin kan skapa fordon
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,Title,Year,PricePerDay,IsAvailable,Description,ImageUrl1,ImageUrl2")] VehicleViewModel vehicleViewModel)
@@ -100,6 +111,8 @@ namespace assignment_mvc_carrental.Controllers
 
         //***********************************************************************************************************************
         // GET: VehicleViewModels/Edit/5
+
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -121,6 +134,7 @@ namespace assignment_mvc_carrental.Controllers
         // POST: VehicleViewModels/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Year,PricePerDay,IsAvailable,Description,ImageUrl1,ImageUrl2")] VehicleViewModel vehicleViewModel)
@@ -152,10 +166,11 @@ namespace assignment_mvc_carrental.Controllers
             }
             return View(vehicleViewModel);
         }
-        
+
 
         //***********************************************************************************************************************
         // GET: VehicleViewModels/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -175,6 +190,7 @@ namespace assignment_mvc_carrental.Controllers
         }
 
         // POST: VehicleViewModels/Delete/5
+        [Authorize(Roles = "Admin")]
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteVehicle(int id)
