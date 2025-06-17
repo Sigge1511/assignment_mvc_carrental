@@ -10,11 +10,11 @@ using assignment_mvc_carrental.Models;
 
 namespace assignment_mvc_carrental.Controllers
 {
-    public class CustomerVMController : Controller
+    public class ApplicationUserCMController : Controller
     {
         private readonly ApplicationDbContext _context;
 
-        public CustomerVMController(ApplicationDbContext context)
+        public ApplicationUserCMController(ApplicationDbContext context)
         {
             _context = context;
         }

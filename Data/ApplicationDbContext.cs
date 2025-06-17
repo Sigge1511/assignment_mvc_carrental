@@ -10,11 +10,8 @@ namespace assignment_mvc_carrental.Data
             : base(options)
         {
         }
-        public DbSet<assignment_mvc_carrental.Classes.Vehicle> VehicleSet { get; set; } = default!;
-        public DbSet<assignment_mvc_carrental.Classes.Customer> CustomerSet { get; set; } = default!;
-        public DbSet<assignment_mvc_carrental.Classes.Booking> BookingSet { get; set; } = default!;
-        public DbSet<assignment_mvc_carrental.Classes.UserRole> UserRoleSet { get; set; } = default!;
-        public DbSet<assignment_mvc_carrental.Classes.Admin> AdminSet { get; set; } = default!;
+        public DbSet<Vehicle> VehicleSet { get; set; } = default!;
+        public DbSet<Booking> BookingSet { get; set; } = default!;
                     
     }
 }

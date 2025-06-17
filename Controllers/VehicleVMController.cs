@@ -20,12 +20,12 @@ namespace assignment_mvc_carrental.Controllers
         private readonly ApplicationDbContext _context; // dependency för Context
         private readonly IMapper _mapper; // dependency för IMapper
         private readonly IVehicle _vehicleRepo; // dependency för IVehicle
-        private readonly Microsoft.AspNetCore.Identity.UserManager<ApplicationUser> _userManager;
+        private readonly Microsoft.AspNetCore.Identity.UserManager<Classes.ApplicationUser> _userManager;
 
         public VehicleVMController(ApplicationDbContext context, 
                                     IMapper mapper, 
                                     IVehicle vehicleRepo, 
-                                    UserManager<ApplicationUser> userManager)
+                                    UserManager<Classes.ApplicationUser> userManager)
         {
             _context = context;
             _mapper = mapper;

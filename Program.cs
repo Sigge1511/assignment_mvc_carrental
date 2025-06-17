@@ -8,7 +8,7 @@ namespace assignment_mvc_carrental
 {
     public class Program
     {
-        public static void Main(string[] args)
+        public static async Task Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
@@ -19,8 +19,12 @@ namespace assignment_mvc_carrental
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddDefaultIdentity<User>(options => options.SignIn.RequireConfirmedAccount = true)
-                .AddEntityFrameworkStores<ApplicationDbContext>(); //säg vilken class/modell som ska användas för Identity
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = false;
+            })
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            .AddDefaultTokenProviders(); //detta ska hjälpa Identity fungera
 
             builder.Services.AddControllersWithViews();
 
@@ -53,10 +57,37 @@ namespace assignment_mvc_carrental
                 app.UseHsts();
             }
 
+            using (var scope = app.Services.CreateScope()) //skapa en admin och användarmanagers
+            {
+                var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+                var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+
+                string[] roles = { "Admin", "Customer" }; //fyller identitys userrole-tabell
+
+                foreach (var role in roles)
+                {
+                    if (!await roleManager.RoleExistsAsync(role))
+                        await roleManager.CreateAsync(new IdentityRole(role));
+                    //skapar nya om de inte finns i db redan
+                }
+
+                // Skapa adminkonto 
+                var adminEmail = "sigge@site.com";
+                var adminUser = await userManager.FindByEmailAsync(adminEmail); //leta efter admin i db
+                if (adminUser == null)
+                {
+                    var newAdmin = new ApplicationUser { UserName = adminEmail, Email = adminEmail };
+                    //skapa en ny admin om den saknas
+                    await userManager.CreateAsync(newAdmin, "Sally"); //sätter ett lösen för admin
+                    await userManager.AddToRoleAsync(newAdmin, "Admin"); //oklart????
+                }
+            }
             app.UseHttpsRedirection();
             app.UseStaticFiles();
 
             app.UseRouting();
+
+            app.UseAuthentication(); // kopplat till inlogg osv
 
             app.UseAuthorization();
 
