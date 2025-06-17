@@ -20,7 +20,7 @@ namespace assignment_mvc_carrental.Models
         [Required(ErrorMessage = "Customer ID is required.")]
         public int CustomerId { get; set; }
 
-        public User? Customer { get; set; } // Navigation property to User
+        public ApplicationUser? Customer { get; set; } // Navigation property to User
         //*********************************************************************************
 
         [Required(ErrorMessage = "Firstname is required.")]

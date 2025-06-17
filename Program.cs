@@ -24,15 +24,7 @@ namespace assignment_mvc_carrental
 
             builder.Services.AddControllersWithViews();
 
-            builder.Services.AddMemoryCache(); //Lägg till minnescache för att lagra data i minnet
 
-            builder.Services.AddSession(options => //Lägg till session för att lagra data mellan requests
-            {
-                options.IdleTimeout = TimeSpan.FromMinutes(60); //sessionen timeoutar efter 60 minuter
-
-                //options.Cookie.HttpOnly = true; //sessionen är endast tillgänglig via HTTP
-                //options.Cookie.IsEssential = true; //sessionen är nödvändig för applikationen
-            });
 
             //**************    MAPPER  **********************************************************************
 
