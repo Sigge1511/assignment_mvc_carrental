@@ -13,6 +13,8 @@ namespace assignment_mvc_carrental.Data
             CreateMap<Vehicle, VehicleViewModel>().ReverseMap();
             CreateMap<BookingViewModel, Booking>().ReverseMap();
             CreateMap<Booking, BookingViewModel>().ReverseMap();
+            CreateMap<AdminViewModel, ApplicationUser>().ReverseMap();
+            CreateMap<ApplicationUser, AdminViewModel>().ReverseMap();
         }
     }
 }

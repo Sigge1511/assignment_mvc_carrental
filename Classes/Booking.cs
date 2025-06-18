@@ -17,9 +17,9 @@ namespace assignment_mvc_carrental.Classes
         //*********************************************************************************
 
         [Required(ErrorMessage = "Customer ID is required.")]
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
 
-        public User? Customer { get; set; } 
+        public ApplicationUser Customer { get; set; } 
         //*********************************************************************************
 
         [Required(ErrorMessage = "Firstname is required.")]

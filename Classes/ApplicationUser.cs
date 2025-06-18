@@ -10,6 +10,11 @@ namespace assignment_mvc_carrental.Classes
         public string? Address { get; set; } = "";
         public string? City { get; set; } = "";
 
+
+        [Required(ErrorMessage = "Email is required.")]
+        public override string Email { get; set; }
+
+
         public ICollection<Booking>? Bookings { get; set; } // Håller koll på alla bokningar som användaren har gjort
     }
 }

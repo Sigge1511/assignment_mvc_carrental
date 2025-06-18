@@ -12,6 +12,7 @@ namespace assignment_mvc_carrental.Data
         }
         public DbSet<Vehicle> VehicleSet { get; set; } = default!;
         public DbSet<Booking> BookingSet { get; set; } = default!;
-                    
+        public DbSet<ApplicationUser> AppUserSet { get; set; } = default!;
+
     }
 }

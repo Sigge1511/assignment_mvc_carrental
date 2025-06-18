@@ -22,18 +22,18 @@ namespace assignment_mvc_carrental.Controllers
         // GET: CustomerVM
         public async Task<IActionResult> Index()
         {
-            return View(await _context.CustomerSet.ToListAsync());
+            return View(await _context.AppUserSet.ToListAsync());
         }
 
         // GET: CustomerVM/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(string? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var customerViewModel = await _context.CustomerSet
+            var customerViewModel = await _context.AppUserSet
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (customerViewModel == null)
             {
@@ -66,14 +66,14 @@ namespace assignment_mvc_carrental.Controllers
         }
 
         // GET: CustomerVM/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(string? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var customerViewModel = await _context.CustomerSet.FindAsync(id);
+            var customerViewModel = await _context.AppUserSet.FindAsync(id);
             if (customerViewModel == null)
             {
                 return NotFound();
@@ -86,7 +86,7 @@ namespace assignment_mvc_carrental.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,FirstName,LastName,Email,PhoneNumber,Address,City")] CustomerViewModel customerViewModel)
+        public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,Email,PhoneNumber,Address,City")] CustomerViewModel customerViewModel)
         {
             if (id != customerViewModel.Id)
             {
@@ -117,14 +117,14 @@ namespace assignment_mvc_carrental.Controllers
         }
 
         // GET: CustomerVM/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(string? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            var customerViewModel = await _context.CustomerSet
+            var customerViewModel = await _context.AppUserSet
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (customerViewModel == null)
             {
@@ -137,21 +137,21 @@ namespace assignment_mvc_carrental.Controllers
         // POST: CustomerVM/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(string id)
         {
-            var customerViewModel = await _context.CustomerSet.FindAsync(id);
+            var customerViewModel = await _context.AppUserSet.FindAsync(id);
             if (customerViewModel != null)
             {
-                _context.CustomerSet.Remove(customerViewModel);
+                _context.AppUserSet.Remove(customerViewModel);
             }
 
             await _context.SaveChangesAsync();
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CustomerViewModelExists(int id)
+        private bool CustomerViewModelExists(string id)
         {
-            return _context.CustomerSet.Any(e => e.Id == id);
+            return _context.AppUserSet.Any(e => e.Id == id);
         }
     }
 }

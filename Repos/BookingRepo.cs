@@ -36,11 +36,12 @@ namespace assignment_mvc_carrental.Repos
                 {
                     Id = b.Id,
                     CustomerId = b.CustomerId,
-                    CustomerFirstName = _context.CustomerSet
+                    CustomerFirstName = _context.AppUserSet
                         .Where(c => c.Id == b.CustomerId)
                         .Select(c => c.FirstName)
                         .FirstOrDefault(),
-                    CustomerLastName = _context.CustomerSet
+
+                    CustomerLastName = _context.AppUserSet
                         .Where(c => c.Id == b.CustomerId)
                         .Select(c => c.LastName)
                         .FirstOrDefault(),

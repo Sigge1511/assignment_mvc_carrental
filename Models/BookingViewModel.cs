@@ -18,7 +18,7 @@ namespace assignment_mvc_carrental.Models
         //*********************************************************************************
 
         [Required(ErrorMessage = "Customer ID is required.")]
-        public int CustomerId { get; set; }
+        public string CustomerId { get; set; }
 
         public ApplicationUser? Customer { get; set; } // Navigation property to User
         //*********************************************************************************
