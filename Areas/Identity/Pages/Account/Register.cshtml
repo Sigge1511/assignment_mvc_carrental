@@ -40,6 +40,12 @@
             </div>
 
             <div class="mb-3">
+                <label asp-for="Input.PhoneNumber">Phone number</label>
+                <input asp-for="Input.PhoneNumber" class="form-control" autocomplete="phonenumber" aria-required="true" />
+                <span asp-validation-for="Input.PhoneNumber" class="text-danger"></span>
+            </div>
+
+            <div class="mb-3">
                 <label asp-for="Input.Email">Email</label>
                 <input asp-for="Input.Email" class="form-control" autocomplete="email" aria-required="true"  />                
                 <span asp-validation-for="Input.Email" class="text-danger"></span>

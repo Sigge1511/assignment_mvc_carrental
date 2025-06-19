@@ -20,6 +20,10 @@ namespace assignment_mvc_carrental.Models
         public string City { get; set; }
 
 
+        [Required(ErrorMessage = "Phonenumber is required")]
+        public string PhoneNumber { get; set; }
+
+
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress]
         public string Email { get; set; }

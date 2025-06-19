@@ -1,10 +1,13 @@
-﻿using assignment_mvc_carrental.Data;
+﻿using assignment_mvc_carrental.Areas.Identity.Pages.Account;
+using assignment_mvc_carrental.Classes;
+using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Models;
 using assignment_mvc_carrental.Repos;
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pages;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -41,17 +44,41 @@ namespace assignment_mvc_carrental.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Email,PhoneNumber,Address,City")] CustomerViewModel customerViewModel)
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Email,Address,City")] RegisterModel registerModel)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(customerViewModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var customerVM = _mapper.Map<CustomerViewModel>(registerModel); //mappa om till en CustomerViewModel
+                await _appUserRepo.AddCustomerAsync(customerVM); //skicka till repot
+
+                TempData["SuccessMessage"] = "Reservation successfully created!";
+
+                return RedirectToAction(nameof(RegisterConfirmation));
             }
-            return View(customerViewModel);
+            return View(registerModel);
         }
 
+
+        //public async Task<IActionResult> Create([Bind("Id,VehicleId,CustomerId,StartDate,EndDate")] BookingViewModel bookingViewModel)
+        //{
+        //    if (ModelState.IsValid)
+        //    {
+        //        var booking = _mapper.Map<Booking>(bookingViewModel); //mappa om till en Booking
+        //        await _bookingRepo.AddBookingAsync(booking); //skicka till repot
+        //        TempData["SuccessMessage"] = "Reservation successfully created!";
+
+
+        //        return RedirectToAction("~/Views/BookingVM/Index.cshtml"); //om det funkar kommer man till alla bokningar igen
+        //    }
+        //    var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); //hämtar alla fordon från databasen genom interface -> repo -> db
+        //    var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
+
+        //    ViewBag.VehicleList = vehicleVMList; //skickar med fordonen till vyn som en ViewBag
+
+        //    ViewBag.SelectedVehicleId = bookingViewModel.Id;            // kan vara null om inget skickas med
+        //    TempData["ErrorMessage"] = "An error occurred while creating the reservation. Please try again.";
+        //    return View(bookingViewModel); //om det inte funkar stannar man på createsidan
+        //}
 
         //***********************************************************************************************************************
 

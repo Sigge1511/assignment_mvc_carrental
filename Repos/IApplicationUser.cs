@@ -1,5 +1,6 @@
 ﻿using assignment_mvc_carrental.Classes;
 using assignment_mvc_carrental.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace assignment_mvc_carrental.Repos
 {
@@ -9,7 +10,7 @@ namespace assignment_mvc_carrental.Repos
         Task<ApplicationUserRepo> GetUserByIDAsync(int userId);
         Task<ApplicationUserRepo> UpdateCustomerAsync(ApplicationUserRepo appuser);
         Task DeleteUserAsync(ApplicationUserRepo appuser);
-        Task<ApplicationUserRepo> AddCustomerAsync(ApplicationUserRepo appuser);
+        Task<IdentityResult> AddCustomerAsync(CustomerViewModel customerVM);
     }
 }
 
