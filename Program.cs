@@ -17,16 +17,23 @@ namespace assignment_mvc_carrental
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
+            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
+
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders(); //detta ska hjälpa Identity fungera
+            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
+                (Microsoft.AspNetCore.Identity.IdentityOptions options) =>
+                {
+                    options.SignIn.RequireConfirmedAccount = false;
+                })
+                .AddEntityFrameworkStores<ApplicationDbContext>()
+                .AddDefaultTokenProviders(); //detta ska hjï¿½lpa Identity fungera
+
+
+
 
             builder.Services.AddControllersWithViews();
+            builder.Services.AddRazorPages();
 
 
 
@@ -36,7 +43,7 @@ namespace assignment_mvc_carrental
 
 
 
-            //************ LÄGG TILL ALLA REPOS HÄR   *****************************************************************
+            //************ Lï¿½GG TILL ALLA REPOS Hï¿½R   *****************************************************************
             builder.Services.AddScoped<IVehicle, VehicleRepo>();
             builder.Services.AddScoped<IBooking, BookingRepo>();
 
@@ -57,7 +64,7 @@ namespace assignment_mvc_carrental
                 app.UseHsts();
             }
 
-            using (var scope = app.Services.CreateScope()) //skapa en admin och användarmanagers
+            using (var scope = app.Services.CreateScope()) //skapa en admin och anvï¿½ndarmanagers
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();
@@ -78,8 +85,20 @@ namespace assignment_mvc_carrental
                 {
                     var newAdmin = new ApplicationUser { UserName = adminEmail, Email = adminEmail };
                     //skapa en ny admin om den saknas
-                    await userManager.CreateAsync(newAdmin, "Sally"); //sätter ett lösen för admin
-                    await userManager.AddToRoleAsync(newAdmin, "Admin"); //oklart????
+                    var result = await userManager.CreateAsync(newAdmin, "Sally123!");
+
+                    if (result.Succeeded)
+                    {
+                        await userManager.AddToRoleAsync(newAdmin, "Admin");
+                    }
+                    else
+                    {
+                        // Logga ut fel
+                        foreach (var error in result.Errors)
+                        {
+                            Console.WriteLine($"Fel: {error.Code} - {error.Description}");
+                        }
+                    }
                 }
             }
             app.UseHttpsRedirection();

@@ -16,5 +16,6 @@ namespace assignment_mvc_carrental.Classes
 
 
         public ICollection<Booking>? Bookings { get; set; } // Håller koll på alla bokningar som användaren har gjort
+
     }
 }
