@@ -15,6 +15,11 @@ namespace assignment_mvc_carrental.Data
             CreateMap<Booking, BookingViewModel>().ReverseMap();
             CreateMap<AdminViewModel, ApplicationUser>().ReverseMap();
             CreateMap<ApplicationUser, AdminViewModel>().ReverseMap();
+            CreateMap<UserInputViewModel, CustomerViewModel>().ReverseMap();
+            CreateMap<CustomerViewModel, UserInputViewModel>().ReverseMap();
+            //.ForMember(dest => dest.Id, opt => opt.Ignore()) // Ignorera Id eftersom det inte ska mappas från CustomerViewModel
+            //.ForMember(dest => dest.Email, opt => opt.Ignore()); // Ignorera Email eftersom det inte ska mappas från CustomerViewModel
+
         }
     }
 }

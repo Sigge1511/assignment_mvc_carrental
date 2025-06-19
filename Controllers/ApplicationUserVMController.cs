@@ -15,14 +15,14 @@ using System.Threading.Tasks;
 
 namespace assignment_mvc_carrental.Controllers
 {
-    public class ApplicationUserCMController : Controller
+    public class ApplicationUserVMController : Controller
     {
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IApplicationUser _appUserRepo;
         private readonly IVehicle _vehicleRepo;
 
-        public ApplicationUserCMController(ApplicationDbContext context, IMapper mapper, IApplicationUser appUserRepo, IVehicle vehicleRepo)
+        public ApplicationUserVMController(ApplicationDbContext context, IMapper mapper, IApplicationUser appUserRepo, IVehicle vehicleRepo)
         {
             _context = context;
             _mapper = mapper;
@@ -33,52 +33,35 @@ namespace assignment_mvc_carrental.Controllers
 
         //***********************************************************************************************************************
 
-        // GET: CustomerVM/Create
-        public IActionResult Create()
+        // GET: CustomerVM/Register
+        public IActionResult Register()
         {
             return View();
         }
 
-        // POST: CustomerVM/Create
+        // POST: CustomerVM/Register
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Email,Address,City")] RegisterModel registerModel)
+        public async Task<IActionResult> Register(UserInputViewModel userInput)
         {
             if (ModelState.IsValid)
             {
-                var customerVM = _mapper.Map<CustomerViewModel>(registerModel); //mappa om till en CustomerViewModel
+                var customerVM = _mapper.Map<CustomerViewModel>(userInput); //mappa om till en CustomerViewModel
                 await _appUserRepo.AddCustomerAsync(customerVM); //skicka till repot
 
                 TempData["SuccessMessage"] = "Reservation successfully created!";
 
                 return RedirectToAction(nameof(RegisterConfirmation));
             }
-            return View(registerModel);
+            return View(userInput);
         }
 
-
-        //public async Task<IActionResult> Create([Bind("Id,VehicleId,CustomerId,StartDate,EndDate")] BookingViewModel bookingViewModel)
-        //{
-        //    if (ModelState.IsValid)
-        //    {
-        //        var booking = _mapper.Map<Booking>(bookingViewModel); //mappa om till en Booking
-        //        await _bookingRepo.AddBookingAsync(booking); //skicka till repot
-        //        TempData["SuccessMessage"] = "Reservation successfully created!";
-
-
-        //        return RedirectToAction("~/Views/BookingVM/Index.cshtml"); //om det funkar kommer man till alla bokningar igen
-        //    }
-        //    var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); //hämtar alla fordon från databasen genom interface -> repo -> db
-        //    var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
-
-        //    ViewBag.VehicleList = vehicleVMList; //skickar med fordonen till vyn som en ViewBag
-
-        //    ViewBag.SelectedVehicleId = bookingViewModel.Id;            // kan vara null om inget skickas med
-        //    TempData["ErrorMessage"] = "An error occurred while creating the reservation. Please try again.";
-        //    return View(bookingViewModel); //om det inte funkar stannar man på createsidan
-        //}
+        public IActionResult RegisterConfirmation()
+        {
+            return View();
+        }
 
         //***********************************************************************************************************************
 

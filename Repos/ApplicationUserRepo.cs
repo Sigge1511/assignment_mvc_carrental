@@ -25,7 +25,8 @@ namespace assignment_mvc_carrental.Repos
                 Email = customerVM.Email,
                 UserName = customerVM.Email,
                 Address = customerVM.Address,
-                City = customerVM.City 
+                City = customerVM.City,
+                PhoneNumber = customerVM.PhoneNumber
             };
             var result = await _userManager.CreateAsync(newUser, customerVM.Password);
             return result;
