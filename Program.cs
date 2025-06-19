@@ -17,9 +17,10 @@ namespace assignment_mvc_carrental
             builder.Services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(connectionString));
 
-            builder.Services.AddDefaultIdentity<ApplicationUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<ApplicationDbContext>();
 
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
+
+
 
             builder.Services.AddIdentity<ApplicationUser, IdentityRole>(
                 (Microsoft.AspNetCore.Identity.IdentityOptions options) =>
@@ -27,7 +28,7 @@ namespace assignment_mvc_carrental
                     options.SignIn.RequireConfirmedAccount = false;
                 })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
-                .AddDefaultTokenProviders(); //detta ska hj�lpa Identity fungera
+                .AddDefaultTokenProviders(); //detta ska hjälpa Identity fungera
 
 
 
@@ -46,7 +47,7 @@ namespace assignment_mvc_carrental
             //************ L�GG TILL ALLA REPOS H�R   *****************************************************************
             builder.Services.AddScoped<IVehicle, VehicleRepo>();
             builder.Services.AddScoped<IBooking, BookingRepo>();
-
+            builder.Services.AddScoped<IApplicationUser, ApplicationUserRepo>();
 
 
             //*************************************************************************************************
@@ -64,7 +65,7 @@ namespace assignment_mvc_carrental
                 app.UseHsts();
             }
 
-            using (var scope = app.Services.CreateScope()) //skapa en admin och anv�ndarmanagers
+            using (var scope = app.Services.CreateScope()) //skapa en admin och usermanager 
             {
                 var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
                 var userManager = scope.ServiceProvider.GetRequiredService<UserManager<ApplicationUser>>();

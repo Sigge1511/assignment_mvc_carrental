@@ -19,6 +19,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.Logging;
+using assignment_mvc_carrental.Models;
 
 namespace assignment_mvc_carrental.Areas.Identity.Pages.Account
 {
