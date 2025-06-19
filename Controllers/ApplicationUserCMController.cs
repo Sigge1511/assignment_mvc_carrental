@@ -1,23 +1,59 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using assignment_mvc_carrental.Data;
+using assignment_mvc_carrental.Models;
+using assignment_mvc_carrental.Repos;
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using assignment_mvc_carrental.Data;
-using assignment_mvc_carrental.Models;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace assignment_mvc_carrental.Controllers
 {
     public class ApplicationUserCMController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly IMapper _mapper;
+        private readonly IApplicationUser _appUserRepo;
+        private readonly IVehicle _vehicleRepo;
 
-        public ApplicationUserCMController(ApplicationDbContext context)
+        public ApplicationUserCMController(ApplicationDbContext context, IMapper mapper, IApplicationUser appUserRepo, IVehicle vehicleRepo)
         {
             _context = context;
+            _mapper = mapper;
+            _appUserRepo = appUserRepo;
+            _vehicleRepo = vehicleRepo;
         }
+
+
+        //***********************************************************************************************************************
+
+        // GET: CustomerVM/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // POST: CustomerVM/Create
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Email,PhoneNumber,Address,City")] CustomerViewModel customerViewModel)
+        {
+            if (ModelState.IsValid)
+            {
+                _context.Add(customerViewModel);
+                await _context.SaveChangesAsync();
+                return RedirectToAction(nameof(Index));
+            }
+            return View(customerViewModel);
+        }
+
+
+        //***********************************************************************************************************************
 
         // GET: CustomerVM
         public async Task<IActionResult> Index()
@@ -43,27 +79,7 @@ namespace assignment_mvc_carrental.Controllers
             return View(customerViewModel);
         }
 
-        // GET: CustomerVM/Create
-        public IActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: CustomerVM/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,FirstName,LastName,Email,PhoneNumber,Address,City")] CustomerViewModel customerViewModel)
-        {
-            if (ModelState.IsValid)
-            {
-                _context.Add(customerViewModel);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
-            }
-            return View(customerViewModel);
-        }
+        
 
         // GET: CustomerVM/Edit/5
         public async Task<IActionResult> Edit(string? id)

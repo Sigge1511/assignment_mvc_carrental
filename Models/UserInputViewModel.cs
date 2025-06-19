@@ -29,8 +29,8 @@ namespace assignment_mvc_carrental.Models
         [DataType(DataType.Password)]
         public string Password { get; set; }
 
+        public List<BookingViewModel> BookingsList { get; set; } = new List<BookingViewModel>();
 
-        
     }
 
 }
