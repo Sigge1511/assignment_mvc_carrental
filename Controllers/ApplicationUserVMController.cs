@@ -4,6 +4,7 @@ using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Models;
 using assignment_mvc_carrental.Repos;
 using AutoMapper;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -20,13 +21,15 @@ namespace assignment_mvc_carrental.Controllers
         private readonly ApplicationDbContext _context;
         private readonly IMapper _mapper;
         private readonly IApplicationUser _appUserRepo;
+        private readonly UserManager<ApplicationUser> _userManager;
         private readonly IVehicle _vehicleRepo;
 
-        public ApplicationUserVMController(ApplicationDbContext context, IMapper mapper, IApplicationUser appUserRepo, IVehicle vehicleRepo)
+        public ApplicationUserVMController(ApplicationDbContext context, IMapper mapper, IApplicationUser appUserRepo, UserManager<ApplicationUser> userManager, IVehicle vehicleRepo)
         {
             _context = context;
             _mapper = mapper;
             _appUserRepo = appUserRepo;
+            _userManager = userManager;
             _vehicleRepo = vehicleRepo;
         }
 
@@ -68,7 +71,27 @@ namespace assignment_mvc_carrental.Controllers
         // GET: CustomerVM
         public async Task<IActionResult> Index()
         {
-            return View(await _context.AppUserSet.ToListAsync());
+            {
+                //hämta ALLA
+                var allUsers = await _userManager.Users.ToListAsync();
+
+                //skapa lista för alla kunder
+                var customerUsers = new List<ApplicationUser>();
+
+                //loopa igenom alla användare och kolla om de har rollen "Customer"
+                foreach (var user in allUsers)
+                {
+                    var roles = await _userManager.GetRolesAsync(user);
+                    if (roles.Contains("Customer")) 
+                    {
+                        customerUsers.Add(user); //lägg till i lista
+                    }
+                }
+                // mappa om till CustomerViewModel
+                var vmList = _mapper.Map<List<CustomerViewModel>>(customerUsers);
+
+                return View("~/Views/CustomerVM/Index.cshtml", vmList);
+            }
         }
 
         // GET: CustomerVM/Details/5
