@@ -1,10 +1,10 @@
-﻿@model assignment_mvc_carrental.Models.BookingViewModel
+﻿@* @* @* @model assignment_mvc_carrental.Models.BookingViewModel
 
 @{
     ViewData["Title"] = "Delete";
 }
 
-@* Notis om man kommer hit efter att det gått fel med radering*@
+@* Notis om man kommer hit efter att det gått fel med radering
 @if (TempData["ErrorMessage"] != null)
 {
     <div class="alert alert-danger">
@@ -36,4 +36,5 @@
 <div>
     <a class="links" asp-action="Edit" asp-route-id="@Model?.Id">Edit reservation instead</a> |
     <a class="links" asp-controller="Home" asp-action="Index">Back to homepage</a>
-</div>
+</div>*@
+

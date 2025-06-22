@@ -5,10 +5,10 @@ namespace assignment_mvc_carrental.Repos
 {
     public interface IBooking
     {
-        Task<List<Booking>> GetAllBookingsAsync();
-        Task<BookingViewModel> GetBookingByIDAsync(int bookingId);
-        Task<Booking> UpdateBookingAsync(int id);
-        Task DeleteBookingAsync(int? bookingId);
-        Task<Booking> AddBookingAsync(Booking booking);
+        Task<IEnumerable<Booking>> GetAllBookingsAsync();
+        Task<Booking?> GetBookingByIdAsync(int id);
+        Task AddBookingAsync(Booking booking);
+        Task UpdateBookingAsync(Booking booking);
+        Task DeleteBookingAsync(int id);
     }
 }
