@@ -6,43 +6,36 @@ namespace assignment_mvc_carrental.Classes
     {
         public int Id { get; set; }
 
-
+        // ********* Fordon *********
         public string VehicleTitle { get; set; } = "";
 
         [Required(ErrorMessage = "Vehicle ID is required.")]
         public int VehicleId { get; set; }
 
-        public Vehicle? Vehicle { get; set; } 
+        public Vehicle? Vehicle { get; set; }
 
-        //*********************************************************************************
+
+        // ********* Identity-baserad användare *********
 
         [Required(ErrorMessage = "Customer ID is required.")]
-        public string CustomerId { get; set; }
+        public string ApplicationUserId { get; set; } = "";
 
-        public ApplicationUser Customer { get; set; } 
-        //*********************************************************************************
+        public ApplicationUser ApplicationUser { get; set; }
 
-        [Required(ErrorMessage = "Firstname is required.")]
-        public string CustomerFirstName { get; set; } = "";
 
-        [Required(ErrorMessage = "Lastname is required.")]
-        public string CustomerLastName { get; set; } = "";
-
-        //*********************************************************************************
+        // ********* Datum *********
 
         [Required(ErrorMessage = "Start date is required.")]
         public DateOnly StartDate { get; set; }
+
         [Required(ErrorMessage = "End date is required.")]
         public DateOnly EndDate { get; set; }
-        //*********************************************************************************
+
+
+        // ********* Pris *********
+
         public double TotalPrice { get; set; } = 0.0;
 
-
-
-
-        public Booking()
-        {
-            
-        }
+     
     }
 }

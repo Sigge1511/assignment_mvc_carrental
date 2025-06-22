@@ -41,26 +41,7 @@ namespace assignment_mvc_carrental.Repos
             return result;
         }
 
-
-
-        public Task DeleteUserAsync(ApplicationUserRepo appuser)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<List<ApplicationUserRepo>> GetAllUsersAsync()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ApplicationUserRepo> GetUserByIDAsync(int userId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<ApplicationUserRepo> UpdateCustomerAsync(ApplicationUserRepo appuser)
-        {
-            throw new NotImplementedException();
-        }
+        //Låter resten av CRUD fixas av idenitys manager direkt i controllern vilket
+        //ska va ok i mindre projekt vad jag läst mig till 
     }
 }

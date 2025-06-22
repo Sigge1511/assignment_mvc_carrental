@@ -237,35 +237,30 @@ namespace assignment_mvc_carrental.Controllers
         }
 
 
+        //Details används inte
+
+        //// GET: CustomerVM/Details/5
+        //public async Task<IActionResult> Details(string? id)
+        //{
+        //    if (id == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    var customerViewModel = await _context.AppUserSet
+        //        .FirstOrDefaultAsync(m => m.Id == id);
+        //    if (customerViewModel == null)
+        //    {
+        //        return NotFound();
+        //    }
+
+        //    return View(customerViewModel);
+        //}
 
 
-
-
-
-
-
-        // GET: CustomerVM/Details/5
-        public async Task<IActionResult> Details(string? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customerViewModel = await _context.AppUserSet
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (customerViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(customerViewModel);
-        }
-
-
-        private bool CustomerViewModelExists(string id)
-        {
-            return _context.AppUserSet.Any(e => e.Id == id);
-        }
+        //private bool CustomerViewModelExists(string id)
+        //{
+        //    return _context.AppUserSet.Any(e => e.Id == id);
+        //}
     }
 }
