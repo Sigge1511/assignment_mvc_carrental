@@ -3,13 +3,12 @@
 @{
     ViewData["Title"] = "Delete";
 }
-
-<h1>Delete</h1>
-
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>CustomerViewModel</h4>
+<br>
+<h1>Delete customer</h1>
+<div>    
     <hr />
+    <br>
+    <h4>Are you sure you want to delete this customer?</h4>
     <dl class="row">
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FirstName)
@@ -48,7 +47,7 @@
             @Html.DisplayFor(model => model.City)
         </dd>
     </dl>
-    
+    <br><br>
     <form asp-action="Delete">
         <input type="hidden" asp-for="Id" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |

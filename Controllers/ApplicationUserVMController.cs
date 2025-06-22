@@ -22,19 +22,68 @@ namespace assignment_mvc_carrental.Controllers
         private readonly IMapper _mapper;
         private readonly IApplicationUser _appUserRepo;
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IVehicle _vehicleRepo;
 
-        public ApplicationUserVMController(ApplicationDbContext context, IMapper mapper, IApplicationUser appUserRepo, UserManager<ApplicationUser> userManager, IVehicle vehicleRepo)
+        public ApplicationUserVMController(ApplicationDbContext context, IMapper mapper, IApplicationUser appUserRepo, UserManager<ApplicationUser> userManager)
         {
             _context = context;
             _mapper = mapper;
             _appUserRepo = appUserRepo;
             _userManager = userManager;
-            _vehicleRepo = vehicleRepo;
+        }
+
+//***********************************************************************************************************************
+
+        // GET: CustomerVM/Create
+
+        [HttpGet]
+        public IActionResult Create()
+        {
+            return View("~/Views/CustomerVM/Create.cshtml", new UserInputViewModel());
+        }
+
+        // POST: CustomerVM/Create
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Create(UserInputViewModel newuserVM)
+        {
+            if (!ModelState.IsValid)
+            {
+                TempData["ErrorMessage"] = "Error. Please check the input.";
+                return View(newuserVM);
+            }
+
+            try
+            {
+                var customerVM = _mapper.Map<CustomerViewModel>(newuserVM);
+
+                // Skapa användaren via repo – och få IdentityResult tillbaka
+                var result = await _appUserRepo.AddCustomerAsync(customerVM);
+
+                if (result.Succeeded)
+                {
+                    //om skapandet lyckades, tilldela rollen "Customer"
+                    var user = await _userManager.FindByEmailAsync(customerVM.Email);
+                    if (user != null)
+                    {
+                        await _userManager.AddToRoleAsync(user, "Customer");
+                    }
+
+                    TempData["SuccessMessage"] = "New customer created!";
+                    return RedirectToAction("Index");
+                }
+
+                TempData["ErrorMessage"] = "Unexpected error. Please try again.";
+                return View(newuserVM);
+            }
+            catch
+            {
+                TempData["ErrorMessage"] = "Unexpected error. Please try again.";
+                return View(newuserVM);
+            }
         }
 
 
-//***********************************************************************************************************************
+        //***********************************************************************************************************************
 
         // GET: CustomerVM/Register
         public IActionResult Register()
@@ -147,7 +196,53 @@ namespace assignment_mvc_carrental.Controllers
         }
 
 
-        //***********************************************************************************************************************
+//***********************************************************************************************************************
+
+        // GET: CustomerVM/Delete/5
+        public async Task<IActionResult> Delete(string? id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return NotFound();
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound();
+
+            var customerVM = _mapper.Map<CustomerViewModel>(user);
+            return View("~/Views/CustomerVM/Delete.cshtml", customerVM);
+        }
+
+        // POST: CustomerVM/Delete/5
+        [HttpPost, ActionName("Delete")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> DeleteConfirmed(string id)
+        {
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var result = await _userManager.DeleteAsync(user);
+            if (result.Succeeded)
+            {
+                TempData["SuccessMessage"] = "Customer has been deleted";
+                return RedirectToAction("~/Views/CustomerVM/Index.cshtml");
+            }
+
+
+            // Skicka tillbaka till samma vy om något gick fel
+            TempData["ErrorMessage"] = "Something went wrong. Try again.";
+            return View(user); // eller View("~/Views/CustomerVM/Delete.cshtml", newuserVM);
+        }
+
+
+
+
+
+
+
+
 
         // GET: CustomerVM/Details/5
         public async Task<IActionResult> Details(string? id)
@@ -167,39 +262,6 @@ namespace assignment_mvc_carrental.Controllers
             return View(customerViewModel);
         }
 
-        
-        // GET: CustomerVM/Delete/5
-        public async Task<IActionResult> Delete(string? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customerViewModel = await _context.AppUserSet
-                .FirstOrDefaultAsync(m => m.Id == id);
-            if (customerViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(customerViewModel);
-        }
-
-        // POST: CustomerVM/Delete/5
-        [HttpPost, ActionName("Delete")]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(string id)
-        {
-            var customerViewModel = await _context.AppUserSet.FindAsync(id);
-            if (customerViewModel != null)
-            {
-                _context.AppUserSet.Remove(customerViewModel);
-            }
-
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
-        }
 
         private bool CustomerViewModelExists(string id)
         {

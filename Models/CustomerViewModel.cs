@@ -6,7 +6,7 @@ namespace assignment_mvc_carrental.Models
 {
     public class CustomerViewModel
     {
-        public string Id { get; set; }
+        public string? Id { get; set; }
 
 
         [Required(ErrorMessage = "First name is required.")]

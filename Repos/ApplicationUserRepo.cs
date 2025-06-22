@@ -16,21 +16,32 @@ namespace assignment_mvc_carrental.Repos
         }
 
 
-        public async Task<IdentityResult> AddCustomerAsync(CustomerViewModel customerVM)
+        public async Task<IdentityResult> AddCustomerAsync(CustomerViewModel viewModel)
         {
-            var newUser = new ApplicationUser    //skapar newUser från CustomerViewModel
+            var user = new ApplicationUser
             {
-                FirstName = customerVM.FirstName,    //tilldelar manuellt
-                LastName = customerVM.LastName,
-                Email = customerVM.Email,
-                UserName = customerVM.Email,
-                Address = customerVM.Address,
-                City = customerVM.City,
-                PhoneNumber = customerVM.PhoneNumber
+                FirstName = viewModel.FirstName,
+                LastName = viewModel.LastName,
+                Email = viewModel.Email,
+                UserName = viewModel.Email,
+                PhoneNumber = viewModel.PhoneNumber,
+                Address = viewModel.Address,
+                City = viewModel.City
             };
-            var result = await _userManager.CreateAsync(newUser, customerVM.Password);
+
+            // Skapa användaren med lösenord
+            var result = await _userManager.CreateAsync(user, viewModel.Password);
+
+            // Om skapandet lyckades så tilldela rollen "Customer"
+            if (result.Succeeded)
+            {
+                await _userManager.AddToRoleAsync(user, "Customer");
+            }
+
             return result;
         }
+
+
 
         public Task DeleteUserAsync(ApplicationUserRepo appuser)
         {
