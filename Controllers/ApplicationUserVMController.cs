@@ -227,7 +227,7 @@ namespace assignment_mvc_carrental.Controllers
             if (result.Succeeded)
             {
                 TempData["SuccessMessage"] = "Customer has been deleted";
-                return RedirectToAction("~/Views/CustomerVM/Index.cshtml");
+                return RedirectToAction("Index", "ApplicationUserVM");
             }
 
 

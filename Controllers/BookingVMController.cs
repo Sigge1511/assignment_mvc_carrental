@@ -28,6 +28,8 @@ namespace assignment_mvc_carrental.Controllers
             _userManager = userManager;
         }
 
+//***********************************************************************************************************************
+
         // GET: BookingVM
         public async Task<IActionResult> Index()
         {
@@ -35,6 +37,9 @@ namespace assignment_mvc_carrental.Controllers
             var bookingVMs = _mapper.Map<List<BookingViewModel>>(bookings);
             return View(bookingVMs);
         }
+
+
+//***********************************************************************************************************************
 
         // GET: BookingVM/Create
         public async Task<IActionResult> Create(int? vehicleId)
@@ -67,6 +72,10 @@ namespace assignment_mvc_carrental.Controllers
             TempData["SuccessMessage"] = "Booking created successfully!";
             return RedirectToAction(nameof(Index));
         }
+
+
+
+//***********************************************************************************************************************
 
         // GET: BookingVM/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -111,6 +120,9 @@ namespace assignment_mvc_carrental.Controllers
                 return View(vm);
             }
         }
+
+
+//***********************************************************************************************************************
 
         // GET: BookingVM/Delete/5
         public async Task<IActionResult> Delete(int? id)
