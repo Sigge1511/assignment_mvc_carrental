@@ -34,7 +34,7 @@ namespace assignment_mvc_carrental.Controllers
         }
 
 
-        //***********************************************************************************************************************
+//***********************************************************************************************************************
 
         // GET: CustomerVM/Register
         public IActionResult Register()
@@ -66,7 +66,7 @@ namespace assignment_mvc_carrental.Controllers
             return View();
         }
 
-        //***********************************************************************************************************************
+//***********************************************************************************************************************
 
         // GET: CustomerVM
         public async Task<IActionResult> Index()
@@ -94,6 +94,61 @@ namespace assignment_mvc_carrental.Controllers
             }
         }
 
+//***********************************************************************************************************************
+
+        // GET: CustomerVM/Edit/5
+        public async Task<IActionResult> Edit(string? id)
+        {
+            if (string.IsNullOrEmpty(id))
+                return NotFound();
+
+            var user = await _userManager.FindByIdAsync(id);
+            if (user == null)
+                return NotFound();
+
+            var customerVM = _mapper.Map<CustomerViewModel>(user);
+            return View("~/Views/CustomerVM/Edit.cshtml", customerVM);
+        }                           
+
+        // POST: CustomerVM/Edit/5
+        // To protect from overposting attacks, enable the specific properties you want to bind to.
+        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(CustomerViewModel CustomerVM)
+        {            
+            if (ModelState.IsValid)
+            {
+                var user = await _userManager.FindByIdAsync(CustomerVM.Id);
+                if (user == null)
+                    return NotFound();
+
+                // Uppdatera fält manuellt
+                user.FirstName = CustomerVM.FirstName;
+                user.LastName = CustomerVM.LastName;
+                user.Email = CustomerVM.Email;
+                user.PhoneNumber = CustomerVM.PhoneNumber;
+                user.Address = CustomerVM.Address;
+                user.City = CustomerVM.City;
+
+                var result = await _userManager.UpdateAsync(user);
+
+                if (result.Succeeded)
+                {
+                    TempData["SuccessMessage"] = "Customer information updated!";
+                    return RedirectToAction("Index");
+                }
+
+                TempData["ErrorMessage"] = "Failed to update customer information. Please try again.";
+                return View("~/Views/CustomerVM/Edit.cshtml", CustomerVM);
+            }
+            TempData["ErrorMessage"] = "Error. Please try again.";
+            return View("~/Views/CustomerVM/Edit.cshtml", CustomerVM);
+        }
+
+
+        //***********************************************************************************************************************
+
         // GET: CustomerVM/Details/5
         public async Task<IActionResult> Details(string? id)
         {
@@ -113,58 +168,6 @@ namespace assignment_mvc_carrental.Controllers
         }
 
         
-
-        // GET: CustomerVM/Edit/5
-        public async Task<IActionResult> Edit(string? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var customerViewModel = await _context.AppUserSet.FindAsync(id);
-            if (customerViewModel == null)
-            {
-                return NotFound();
-            }
-            return View(customerViewModel);
-        }
-
-        // POST: CustomerVM/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(string id, [Bind("Id,FirstName,LastName,Email,PhoneNumber,Address,City")] CustomerViewModel customerViewModel)
-        {
-            if (id != customerViewModel.Id)
-            {
-                return NotFound();
-            }
-
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    _context.Update(customerViewModel);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!CustomerViewModelExists(customerViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
-            }
-            return View(customerViewModel);
-        }
-
         // GET: CustomerVM/Delete/5
         public async Task<IActionResult> Delete(string? id)
         {

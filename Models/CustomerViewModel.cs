@@ -1,4 +1,5 @@
 ﻿using assignment_mvc_carrental.Classes;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using System.ComponentModel.DataAnnotations;
 
 namespace assignment_mvc_carrental.Models
@@ -31,8 +32,8 @@ namespace assignment_mvc_carrental.Models
         public string Email { get; set; }
 
 
-        [Required(ErrorMessage = "Password is required.")]
-        public string Password { get; set; } // Endast för registreringen
+        [BindNever] //hjälper till med strul vid edit av kunder
+        public string? Password { get; set; } // Endast för registreringen
 
     }
 }
