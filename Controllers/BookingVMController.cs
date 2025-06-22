@@ -3,236 +3,143 @@ using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Models;
 using assignment_mvc_carrental.Repos;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace assignment_mvc_carrental.Controllers
 {
+    [Authorize]
     public class BookingVMController : Controller
     {
-        private readonly ApplicationDbContext _context;
-        private readonly IMapper _mapper;
         private readonly IBooking _bookingRepo;
         private readonly IVehicle _vehicleRepo;
+        private readonly IMapper _mapper;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-
-        public BookingVMController(ApplicationDbContext context, IMapper mapper, IBooking bookingRepo, IVehicle vehicleRep)
+        public BookingVMController(IBooking bookingRepo, IVehicle vehicleRepo, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
-            _context = context;
-            _mapper = mapper;
             _bookingRepo = bookingRepo;
-            _vehicleRepo = vehicleRep;
+            _vehicleRepo = vehicleRepo;
+            _mapper = mapper;
+            _userManager = userManager;
         }
-
-
-//***********************************************************************************************************************
 
         // GET: BookingVM
         public async Task<IActionResult> Index()
         {
-            var bookings = await _bookingRepo.GetAllBookingsAsync(); //hämtar alla från repo
-            var bookingVMList = _mapper.Map<List<BookingViewModel>>(bookings);
-            return View("~/Views/BookingVM/Index.cshtml", bookingVMList);
+            var bookings = await _bookingRepo.GetAllBookingsAsync();
+            var bookingVMs = _mapper.Map<List<BookingViewModel>>(bookings);
+            return View(bookingVMs);
         }
-
-
-
-//***********************************************************************************************************************
-
-
-        // GET: BookingVM/Details/5
-        public async Task<IActionResult> Details(int? id)
-        {
-            if (id == null)
-            {
-                return NotFound();
-            }
-
-            var bookingViewModel = await _bookingRepo.GetBookingByIDAsync(id.Value);
-
-            if (bookingViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(bookingViewModel);
-        }
-
-
-
- //***********************************************************************************************************************
 
         // GET: BookingVM/Create
         public async Task<IActionResult> Create(int? vehicleId)
         {
-            var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); //hämtar alla fordon från databasen genom interface -> repo -> db
-            var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
-
-            ViewBag.VehicleList = vehicleVMList; //skickar med fordonen till vyn som en ViewBag
-
-            ViewBag.SelectedVehicleId = vehicleId;            // kan vara null om inget skickas med
-
+            var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
+            ViewBag.VehicleList = new SelectList(vehicles, "Id", "Title", vehicleId);
             return View();
         }
 
         // POST: BookingVM/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,VehicleId,CustomerId,StartDate,EndDate")] BookingViewModel bookingViewModel)
+        public async Task<IActionResult> Create(BookingViewModel vm)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
-                var booking = _mapper.Map<Booking>(bookingViewModel); //mappa om till en Booking
-                await _bookingRepo.AddBookingAsync(booking); //skicka till repot
-                TempData["SuccessMessage"] = "Reservation successfully created!";
-
-
-                return RedirectToAction("~/Views/BookingVM/Index.cshtml"); //om det funkar kommer man till alla bokningar igen
+                var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
+                ViewBag.VehicleList = new SelectList(vehicles, "Id", "Title", vm.VehicleId);
+                TempData["ErrorMessage"] = "Something went wrong. Please check your input.";
+                return View(vm);
             }
-            var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); //hämtar alla fordon från databasen genom interface -> repo -> db
-            var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
 
-            ViewBag.VehicleList = vehicleVMList; //skickar med fordonen till vyn som en ViewBag
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
 
-            ViewBag.SelectedVehicleId = bookingViewModel.Id;            // kan vara null om inget skickas med
-            TempData["ErrorMessage"] = "An error occurred while creating the reservation. Please try again.";
-            return View(bookingViewModel); //om det inte funkar stannar man på createsidan
+            var booking = _mapper.Map<Booking>(vm);
+            booking.ApplicationUserId = userId;
+
+            await _bookingRepo.AddBookingAsync(booking);
+            TempData["SuccessMessage"] = "Booking created successfully!";
+            return RedirectToAction(nameof(Index));
         }
-
-
-
-//***********************************************************************************************************************
 
         // GET: BookingVM/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            //hämtar alla fordon för att ha dropdown-meny från databasen genom interface -> repo -> db
-            var vehicles = await _vehicleRepo.GetAllVehiclesAsync(); 
-            var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles); //mappar fordonen till en lista av VehicleViewModel
+            if (id == null) return NotFound();
 
-            ViewBag.VehicleList = vehicleVMList; //skickar med VM-fordonslista till vyn som en ViewBag
-            ViewBag.SelectedVehicleId = id;      // skickar med id på förvalt fordon
+            var booking = await _bookingRepo.GetBookingByIdAsync(id.Value);
+            if (booking == null) return NotFound();
 
+            var vm = _mapper.Map<BookingViewModel>(booking);
 
-            if (id == null)
-            {
-                return NotFound();
-            }
+            var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
+            ViewBag.VehicleList = new SelectList(vehicles, "Id", "Title", vm.VehicleId);
 
-            var bookingViewModel = await _bookingRepo.GetBookingByIDAsync(id.Value);
-            if (bookingViewModel == null)
-            {
-                return NotFound();
-            }
-            return View(bookingViewModel);
+            return View(vm);
         }
-
 
         // POST: BookingVM/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
-        [ValidateAntiForgeryToken]          //DENNA MÅSTE FIXAS SEN
-        public async Task<IActionResult> Edit(int id, [Bind("Id,VehicleId,CustomerId,StartDate,EndDate,TotalPrice")] BookingViewModel bookingViewModel)
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(int id, BookingViewModel vm)
         {
-            if (id != bookingViewModel.Id)
+            if (id != vm.Id) return NotFound();
+
+            if (!ModelState.IsValid)
             {
-                return NotFound();
+                var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
+                ViewBag.VehicleList = new SelectList(vehicles, "Id", "Title", vm.VehicleId);
+                return View(vm);
             }
 
-            if (ModelState.IsValid)
+            try
             {
-                try
-                {
-                    await _bookingRepo.UpdateBookingAsync(id);
-                    TempData["SuccessMessage"] = "Reservation successfully updated!";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!BookingViewModelExists(bookingViewModel.Id))
-                    {
-                        return NotFound();
-                    }
-
-                    TempData["ErrorMessage"] = "An error occurred while editing the reservation.";
-                    return View(bookingViewModel); // stanna kvar på edit-sidan
-                }
+                var updatedBooking = _mapper.Map<Booking>(vm);
+                await _bookingRepo.UpdateBookingAsync(updatedBooking);
+                TempData["SuccessMessage"] = "Booking updated!";
+                return RedirectToAction(nameof(Index));
             }
-
-            return View(bookingViewModel); // ModelState is not valid
+            catch (DbUpdateConcurrencyException)
+            {
+                TempData["ErrorMessage"] = "Something went wrong while updating.";
+                return View(vm);
+            }
         }
-       
-
-
-
-//***********************************************************************************************************************
 
         // GET: BookingVM/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
-            var bookingViewModel = await _bookingRepo.GetBookingByIDAsync(id.Value);
+            var booking = await _bookingRepo.GetBookingByIdAsync(id.Value);
+            if (booking == null) return NotFound();
 
-            if (bookingViewModel == null)
-            {
-                return NotFound();
-            }
-
-            return View(bookingViewModel);
+            var vm = _mapper.Map<BookingViewModel>(booking);
+            return View(vm);
         }
 
-        // POST: BookingVM/Delete/5
-        [HttpPost]
+        // POST: BookingVM/DeleteConfirmed/5
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteBooking(int bookingId)
-        {            
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
             try
             {
-                await _bookingRepo.DeleteBookingAsync(bookingId);
-                TempData["SuccessMessage"] = "Reservation successfully deleted"; //skickar med en notis att bokningen är raderad
-
-                return RedirectToAction("Index", "VehicleVM");
+                await _bookingRepo.DeleteBookingAsync(id);
+                TempData["SuccessMessage"] = "Booking deleted.";
+                return RedirectToAction(nameof(Index));
             }
-            catch (Exception)
+            catch
             {
-                //försök hitta bokningen igen så vi kan behålla rätt objekt i deletevyn när den laddas om
-                var booking = await _bookingRepo.GetBookingByIDAsync(bookingId); 
-                var bookingVM = _mapper.Map<BookingViewModel>(booking);         //mappa om till VM
-
-
-                var errorViewModel = new ErrorViewModel(); //den vill tydligen ha en sån när man skickar till Error-vyn
-
-                if (bookingVM == null)
-                {
-                    // Om nått är megatokigt – visa en generell felvy
-                    return View("Error", errorViewModel); 
-                }
-                // Annars – visa Delete-vyn igen med bokningen kvar
-                TempData["ErrorMessage"] = "Could not delete the reservation. Try again.";
-
-                return View("Delete", bookingVM);
+                TempData["ErrorMessage"] = "Could not delete booking.";
+                return RedirectToAction(nameof(Delete), new { id });
             }
-        }
-
-
-
-
-//***********************************************************************************************************************
-
-        private bool BookingViewModelExists(int id)
-        {
-            return _context.BookingSet.Any(e => e.Id == id);
         }
     }
 }
