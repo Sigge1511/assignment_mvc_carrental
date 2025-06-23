@@ -38,7 +38,8 @@ namespace assignment_mvc_carrental.Controllers
         }
 
 
-        //***********************************************************************************************************************
+//***********************************************************************************************************************
+        //NÄR EN ANVÄNDARE SKAPAR EN NY BOKNING 
 
         // GET: BookingVM/Create
         public async Task<IActionResult> Create(int? vehicleId)
@@ -123,9 +124,7 @@ namespace assignment_mvc_carrental.Controllers
             }
         }
 
-
-
-        //***********************************************************************************************************************
+//***********************************************************************************************************************
 
         // GET: BookingVM/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -138,7 +137,10 @@ namespace assignment_mvc_carrental.Controllers
             var vm = _mapper.Map<BookingViewModel>(booking);
 
             var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
-            ViewBag.VehicleList = new SelectList(vehicles, "Id", "Title", vm.VehicleId);
+            var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles);
+
+            ViewBag.VehicleList = vehicleVMList;
+            ViewBag.SelectedVehicleId = vm.VehicleId;
 
             return View(vm);
         }
@@ -148,29 +150,46 @@ namespace assignment_mvc_carrental.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, BookingViewModel vm)
         {
+            //errorskydd/kollar
             if (id != vm.Id) return NotFound();
 
             if (!ModelState.IsValid)
             {
                 var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
-                ViewBag.VehicleList = new SelectList(vehicles, "Id", "Title", vm.VehicleId);
+                var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles);
+                ViewBag.VehicleList = vehicleVMList;
+                ViewBag.SelectedVehicleId = vm.VehicleId;
                 return View(vm);
             }
-
+            //***************************************************************************
             try
             {
-                var updatedBooking = _mapper.Map<Booking>(vm);
-                await _bookingRepo.UpdateBookingAsync(updatedBooking);
+                //Hämta bokningen från DB
+                var existingBooking = await _bookingRepo.GetBookingByIdAsync(id);
+                if (existingBooking == null) return NotFound();
+
+                // Uppdatera tillåtna fält
+                existingBooking.VehicleId = vm.VehicleId;
+                existingBooking.StartDate = vm.StartDate;
+                existingBooking.EndDate = vm.EndDate;
+
+                // Räkna om priset
+                var vehicle = await _vehicleRepo.GetVehicleByIDAsync(vm.VehicleId);
+                var days = (vm.EndDate.DayNumber - vm.StartDate.DayNumber) + 1;
+                existingBooking.TotalPrice = vehicle.PricePerDay * days;
+
+                //Spara uppdaterad bokning
+                await _bookingRepo.UpdateBookingAsync(existingBooking);
+
                 TempData["SuccessMessage"] = "Booking updated!";
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "VehicleVM");
             }
-            catch (DbUpdateConcurrencyException)
+            catch 
             {
                 TempData["ErrorMessage"] = "Something went wrong while updating.";
                 return View(vm);
             }
         }
-
 
 //***********************************************************************************************************************
 

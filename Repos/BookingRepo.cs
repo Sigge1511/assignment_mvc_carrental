@@ -21,7 +21,10 @@ namespace assignment_mvc_carrental.Repos
 
         public async Task<Booking?> GetBookingByIdAsync(int id)
         {
-            return await _context.BookingSet.FindAsync(id);
+            return await _context.BookingSet
+                .Include(b => b.Vehicle)
+                .Include(b => b.ApplicationUser) // hämta med info om bil och user med bokningen
+                .FirstOrDefaultAsync(b => b.Id == id);
         }
 
         public async Task AddBookingAsync(Booking booking)

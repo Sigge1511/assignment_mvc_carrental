@@ -12,8 +12,12 @@ namespace assignment_mvc_carrental.Data
             CreateMap<VehicleViewModel, Vehicle>().ReverseMap();
             CreateMap<Vehicle, VehicleViewModel>().ReverseMap();
 
-            CreateMap<BookingViewModel, Booking>().ReverseMap();
-            CreateMap<Booking, BookingViewModel>().ReverseMap();
+            CreateMap<Booking, BookingViewModel>()
+                .ForMember(dest => dest.Vehicle, opt => opt.MapFrom(src => src.Vehicle))
+                .ForMember(dest => dest.ApplicationUser, opt => opt.MapFrom(src => src.ApplicationUser));
+            CreateMap<BookingViewModel, Booking>()
+                .ForMember(dest => dest.Vehicle, opt => opt.MapFrom(src => src.Vehicle))
+                .ForMember(dest => dest.ApplicationUser, opt => opt.MapFrom(src => src.ApplicationUser));
 
             CreateMap<AdminViewModel, ApplicationUser>().ReverseMap();
             CreateMap<ApplicationUser, AdminViewModel>().ReverseMap();

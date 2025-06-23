@@ -1,90 +1,61 @@
-﻿@* @model assignment_mvc_carrental.Models.BookingViewModel
-
+﻿@model assignment_mvc_carrental.Models.BookingViewModel
 @{
-    ViewData["Title"] = "Edit Booking";
+    ViewData["Title"] = "Edit Reservation";
     var vehicles = ViewBag.VehicleList as List<VehicleViewModel>;
     var selectedId = ViewBag.SelectedVehicleId as int?;
 }
 <br>
 <h3>Edit reservation</h3>
 <hr />
-<br>
+
 <div id="vehicleImageContainer" style="margin:15px 0; max-width: 60%;"></div>
-<br>
-<br>
 
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="Id" />
-    <div>        
-        <p><strong>Customer:</strong> @Model.CustomerFirstName @Model.CustomerLastName</p>
-        <p><strong>Vehicle:</strong> @Model.VehicleTitle</p>
-        <p><strong>Pick up:</strong> @Model.StartDate</p>
-        <p><strong>Drop off:</strong> @Model.EndDate</p>
-        <p><strong>Total price:</strong> @Model.TotalPrice</p>
 
-    </div>
-    <br><br><br>
     <div class="form-group">
         <label for="VehicleId">Select vehicle</label>
         <select id="VehicleId" name="VehicleId" class="form-control" onchange="onVehicleChange()">
-            @if (selectedId == null)
+            <option value="">---</option>
+            @foreach (var v in vehicles)
             {
-                @Html.Raw("<option value=\"\" disabled selected>---</option>")
-            }
-            else
-            {
-                @Html.Raw("<option value=\"\" disabled>---</option>")
-            }
-
-            @foreach (var vehicle in vehicles)
-            {
-                var isSelected = selectedId.HasValue && vehicle.Id == selectedId.Value;
-                var selectedAttr = isSelected ? " selected" : "";
-                var optionHtml = $"<option value=\"{vehicle.Id}\" data-price=\"{vehicle.PricePerDay}\" data-imageurl=\"{vehicle.ImageUrl1}\"{selectedAttr}>{vehicle.Title}</option>";
+                var selected = selectedId.HasValue && v.Id == selectedId.Value ? "selected" : "";
+                var optionHtml = $"<option value='{v.Id}' data-price='{v.PricePerDay}' data-imageurl='{v.ImageUrl1}' {selected}>{v.Title}</option>";
                 @Html.Raw(optionHtml)
             }
         </select>
-        <br>
-            <p>Price per day: <span id="pricePerDay">-</span> SEK</p>
+        <span asp-validation-for="VehicleId" class="text-danger"></span>
+    </div>
 
-            <div class="form-group">
-                <label asp-for="CustomerFirstName" class="control-label">Firstname</label>
-                <input asp-for="CustomerFirstName" class="form-control" placeholder="Förnamn" />
-                <span asp-validation-for="CustomerFirstName" class="text-danger"></span>
-            </div>
+    <br />
+    <p>Price per day: <span id="pricePerDay">-</span> SEK</p>
 
-            <div class="form-group">
-                <label asp-for="CustomerLastName" class="control-label">Lastname</label>
-                <input asp-for="CustomerLastName" class="form-control" placeholder="Efternamn" />
-                <span asp-validation-for="CustomerLastName" class="text-danger"></span>
-            </div>
+    <div class="form-group">
+        <label>Customer</label>
+        <input class="form-control" value="@($"{Model.ApplicationUser?.FirstName} {Model.ApplicationUser?.LastName}")" disabled />
+    </div>
 
-        <div class="form-group">
-            <label asp-for="CustomerLastName" class="control-label">@Model.VehicleTitle</label>
-            <input asp-for="CustomerLastName" class="form-control" placeholder="@Model.CustomerFirstName @Model.CustomerLastName" />
-            <span asp-validation-for="CustomerLastName" class="text-danger"></span>
-        </div>
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label">Pick up</label>
+        <input asp-for="StartDate" type="date" class="form-control" id="StartDate" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
 
-        <div class="form-group">
-            <label asp-for="StartDate" class="control-label">@Model.StartDate</label>
-            <input asp-for="StartDate" type="date" class="form-control" />
-            <span asp-validation-for="StartDate" class="text-danger"></span>
-        </div>
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label">Drop off</label>
+        <input asp-for="EndDate" type="date" class="form-control" id="EndDate" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
 
-        <div class="form-group">
-            <label asp-for="EndDate" class="control-label">@Model.EndDate</label>
-            <input asp-for="EndDate" type="date" class="form-control" />
-            <span asp-validation-for="EndDate" class="text-danger"></span>
-        </div>
-            <p>Total price: <span id="totalPrice">-</span> SEK</p><br><br>
+    <br />
+    <p>Total price: <span id="totalPrice">-</span> SEK</p><br />
 
-        <button type="submit" class="btn btn-primary">Save changes</button><br>
-    </div>      
+    <button type="submit" class="btn btn-primary">Save changes</button>
 </form>
-<br>
-<br>
-<a class="links" asp-controller="Home" asp-action="Index" class="btn btn-secondary">Back to homepage</a>
 
+<br />
+@* <a class="links" asp-controller="BookingVM" asp-action="Index">Back to all reservations</a>
+ *@
 @section Scripts {
     <script>
         function onVehicleChange() {
@@ -108,7 +79,7 @@
 
             if (startInput.value && endInput.value && endDate >= startDate) {
                 const diffTime = Math.abs(endDate - startDate);
-                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1; // inkl båda dagarna
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
                 total = diffDays * pricePerDay;
             }
 
@@ -122,7 +93,7 @@
 
             const container = document.getElementById("vehicleImageContainer");
             if (imageUrl) {
-                container.innerHTML = `<img src="${imageUrl}" alt="Valt fordon" style="max-width: 100%; height: auto; border-radius: 8px;" />`;
+                container.innerHTML = `<img src="${imageUrl}" alt="Selected vehicle" style="max-width: 100%; height: auto; border-radius: 8px;" />`;
             } else {
                 container.innerHTML = "";
             }
@@ -130,10 +101,8 @@
 
         window.onload = function () {
             onVehicleChange();
-
             document.getElementById("StartDate").addEventListener("change", updatePrice);
             document.getElementById("EndDate").addEventListener("change", updatePrice);
         };
     </script>
 }
- *@
