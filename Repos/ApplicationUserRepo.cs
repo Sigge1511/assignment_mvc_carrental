@@ -1,6 +1,8 @@
 ﻿using assignment_mvc_carrental.Classes;
+using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 
 namespace assignment_mvc_carrental.Repos
 {
@@ -8,11 +10,13 @@ namespace assignment_mvc_carrental.Repos
     {
         private readonly UserManager<ApplicationUser> _userManager;
         private readonly IBooking _bookingRepo;
+        private readonly ApplicationDbContext _context;
 
-        public ApplicationUserRepo(UserManager<ApplicationUser> userManager, IBooking bookingRepo)
+        public ApplicationUserRepo(UserManager<ApplicationUser> userManager, IBooking bookingRepo, ApplicationDbContext context)
         {
             _userManager = userManager;
             _bookingRepo = bookingRepo;
+            _context = context;
         }
 
 
@@ -39,6 +43,14 @@ namespace assignment_mvc_carrental.Repos
             }
 
             return result;
+        }
+
+        public async Task<ApplicationUser?> GetUserWithBookingsAsync(string userId)
+        {
+            return await _context.Users
+                    .Include(u => u.Bookings!)
+                        .ThenInclude(b => b.Vehicle)
+                    .FirstOrDefaultAsync(u => u.Id == userId);
         }
 
         //Låter resten av CRUD fixas av idenitys manager direkt i controllern vilket

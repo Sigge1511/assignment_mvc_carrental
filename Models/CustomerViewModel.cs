@@ -35,5 +35,10 @@ namespace assignment_mvc_carrental.Models
         [BindNever] //hjälper till med strul vid edit av kunder
         public string? Password { get; set; } // Endast för registreringen
 
+
+
+        public List<BookingViewModel> Bookings { get; set; } = new();
+
+
     }
 }

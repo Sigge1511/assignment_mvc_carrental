@@ -8,6 +8,7 @@ namespace assignment_mvc_carrental.Repos
     {
         Task<IdentityResult> AddCustomerAsync(CustomerViewModel customerVM);
 
+        Task<ApplicationUser?> GetUserWithBookingsAsync(string userId);
 
         //låter resten av CRUD fixas av idenitys manager direkt i controllern
     }

@@ -4,6 +4,7 @@ using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Models;
 using assignment_mvc_carrental.Repos;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -12,6 +13,7 @@ using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Templates.BlazorIdentity.Pag
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace assignment_mvc_carrental.Controllers
@@ -236,6 +238,30 @@ namespace assignment_mvc_carrental.Controllers
             return View(user); // eller View("~/Views/CustomerVM/Delete.cshtml", newuserVM);
         }
 
+//***********************************************************************************************************************
+
+        // GET: CustomerVM/UserPage
+        [Authorize]
+        public async Task<IActionResult> UserPage()
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (userId == null) return Unauthorized();
+
+            var user = await _appUserRepo.GetUserWithBookingsAsync(userId);
+            if (user == null) return NotFound();
+
+            var vm = _mapper.Map<CustomerViewModel>(user);
+
+            return View("~/Views/CustomerVM/UserPage.cshtml", vm);
+        }
+
+
+//***********************************************************************************************************************
+        [HttpGet("/admin")]
+        public IActionResult AdminLogin()
+        {
+            return View("~/Views/AdminViews/AdminLogin.cshtml");
+        }
 
         //Details används inte
 
