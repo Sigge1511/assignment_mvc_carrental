@@ -1,4 +1,8 @@
 ﻿@model IEnumerable<assignment_mvc_carrental.Models.VehicleViewModel>
+@using Microsoft.AspNetCore.Identity
+@using assignment_mvc_carrental.Classes
+@inject SignInManager<ApplicationUser> SignInManager
+
 
 @{
     ViewData["Title"] = "Index";
@@ -6,9 +10,11 @@
 <br>
 <h1>Our premium vehicles</h1>
 
-<p>
-    <a class="links" asp-action="Create">Add new vehicle</a>             @* //Endast för admin? *@
-</p>
+@if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+{
+    <a class="links" asp-action="Create">Add new vehicle</a>
+}
+<br>
 <table class="table">
     <thead>
         <tr>
@@ -56,9 +62,12 @@
                 @Html.DisplayFor(modelItem => item.Description)
             </td>
             <td>
-                <a class="links" asp-action="Edit" asp-route-id="@item.Id">Edit</a>              @* Bara för admin?? *@
                 <a class="links" asp-action="Details" asp-route-id="@item.Id">Details</a> 
-                <a class="links" asp-action="Delete" asp-route-id="@item.Id">Delete</a>      @* Bara för admin?? *@
+                @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                {
+                    <a class="links" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="links" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                }
             </td>
         </tr>
 }

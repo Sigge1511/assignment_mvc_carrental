@@ -35,16 +35,17 @@ namespace assignment_mvc_carrental.Controllers
             _signInManager = signInManager;
         }
 
-//***********************************************************************************************************************
+        //***********************************************************************************************************************
 
         // GET: CustomerVM/Create
-
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult Create()
         {
             return View("~/Views/CustomerVM/Create.cshtml", new UserInputViewModel());
         }
 
+        [Authorize(Roles = "Admin")]
         // POST: CustomerVM/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -119,9 +120,10 @@ namespace assignment_mvc_carrental.Controllers
             return View();
         }
 
-//***********************************************************************************************************************
+        //***********************************************************************************************************************
 
         // GET: CustomerVM
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             {
@@ -200,9 +202,10 @@ namespace assignment_mvc_carrental.Controllers
         }
 
 
-//***********************************************************************************************************************
+        //***********************************************************************************************************************
 
         // GET: CustomerVM/Delete/5
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(string? id)
         {
             if (string.IsNullOrEmpty(id))
@@ -216,6 +219,7 @@ namespace assignment_mvc_carrental.Controllers
             return View("~/Views/CustomerVM/Delete.cshtml", customerVM);
         }
 
+        [Authorize(Roles = "Admin")]
         // POST: CustomerVM/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]

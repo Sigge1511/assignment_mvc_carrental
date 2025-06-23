@@ -54,6 +54,10 @@ namespace assignment_mvc_carrental.Controllers
                 return NotFound();
             }
 
+            // Kollar om användaren är inloggad och om den är admin,
+            // för att kunna visa admin-funktioner i vyn sen
+            ViewBag.IsAdmin = User.IsInRole("Admin");
+
             //Hämtar async eftersom det kan ta tid att hämta data från databasen och då är det best practice?
             var vehicle = await _vehicleRepo.GetVehicleByIDAsync(id.Value); //hämtar fordonet med id genom interface -> repo -> db
 
@@ -106,8 +110,6 @@ namespace assignment_mvc_carrental.Controllers
             }
             return View(vehicleViewModel); //om det inte funkar så stanna på sidan
         }
-
-
 
         //***********************************************************************************************************************
         // GET: VehicleViewModels/Edit/5
@@ -221,8 +223,6 @@ namespace assignment_mvc_carrental.Controllers
                 return View("Delete", vehicleVM);
             }
         }
-
-
 
 
 //***********************************************************************************************************************

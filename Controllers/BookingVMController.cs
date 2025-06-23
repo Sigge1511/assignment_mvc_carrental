@@ -27,9 +27,10 @@ namespace assignment_mvc_carrental.Controllers
             _userManager = userManager;
         }
 
-//***********************************************************************************************************************
+        //***********************************************************************************************************************
 
         // GET: BookingVM
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Index()
         {
             var bookings = await _bookingRepo.GetAllBookingsAsync();

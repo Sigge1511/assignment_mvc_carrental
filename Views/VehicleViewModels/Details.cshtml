@@ -58,10 +58,12 @@
     </dl>
 </div>
 <div>
-    <a class="links" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |       @*      Endast för admin??   *@
-    <a class="links" asp-action="Delete" asp-route-id="@Model?.Id">Delete</a> |         @*    Endast för admin??  *@
+    @if ((bool?)ViewBag.IsAdmin == true)
+    {
+    <a class="links" asp-action="Edit" asp-route-id="@Model.Id">Edit</a><text> | </text>
+    <a class="links" asp-action="Delete" asp-route-id="@Model.Id"> Delete</a><text> | </text>
+    }
     <a class="links" asp-action="Index">Back to List</a>
 </div>
 <br>
-<br>
-<br>
+
