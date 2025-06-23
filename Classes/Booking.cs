@@ -7,7 +7,6 @@ namespace assignment_mvc_carrental.Classes
         public int Id { get; set; }
 
         // ********* Fordon *********
-        public string VehicleTitle { get; set; } = "";
 
         [Required(ErrorMessage = "Vehicle ID is required.")]
         public int VehicleId { get; set; }

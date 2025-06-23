@@ -8,7 +8,6 @@ namespace assignment_mvc_carrental.Models
         public int Id { get; set; }
 
         // ********* Fordon *********
-        public string VehicleTitle { get; set; } = "";
 
         [Required(ErrorMessage = "Vehicle ID is required.")]
         public int VehicleId { get; set; }
@@ -18,8 +17,7 @@ namespace assignment_mvc_carrental.Models
 
         // ********* Identity-baserad användare *********
 
-        [Required(ErrorMessage = "User ID is required.")]
-        public string ApplicationUserId { get; set; } = "";
+        public string? ApplicationUserId { get; set; }
 
         public ApplicationUser? ApplicationUser { get; set; }
 

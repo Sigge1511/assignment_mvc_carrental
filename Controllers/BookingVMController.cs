@@ -12,7 +12,6 @@ using System.Security.Claims;
 
 namespace assignment_mvc_carrental.Controllers
 {
-    [Authorize]
     public class BookingVMController : Controller
     {
         private readonly IBooking _bookingRepo;
@@ -39,43 +38,94 @@ namespace assignment_mvc_carrental.Controllers
         }
 
 
-//***********************************************************************************************************************
+        //***********************************************************************************************************************
 
         // GET: BookingVM/Create
         public async Task<IActionResult> Create(int? vehicleId)
         {
             var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
-            ViewBag.VehicleList = new SelectList(vehicles, "Id", "Title", vehicleId);
+            var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles);
+
+            ViewBag.VehicleList = vehicleVMList;
+            ViewBag.SelectedVehicleId = vehicleId;
             return View();
         }
 
         // POST: BookingVM/Create
+        [Authorize]
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(BookingViewModel vm)
         {
-            if (!ModelState.IsValid)
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            if (vm.StartDate < today) //datumkoll
+            {
+                ModelState.AddModelError(nameof(vm.StartDate), "Start date cannot be in the past.");
+            }
+
+            var days = (vm.EndDate.DayNumber - vm.StartDate.DayNumber) + 1; //mer datumkoll ang slutdatum
+            if (days < 1)
+            {
+                ModelState.AddModelError(nameof(vm.EndDate), "End date must be the same or after the start date.");
+            }
+
+            if (!ModelState.IsValid) //om något är tokigt så stanna i vyn med valda fordonet
             {
                 var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
-                ViewBag.VehicleList = new SelectList(vehicles, "Id", "Title", vm.VehicleId);
+                var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles);
+                ViewBag.VehicleList = vehicleVMList;
+                ViewBag.SelectedVehicleId = vm.VehicleId;
+
                 TempData["ErrorMessage"] = "Something went wrong. Please check your input.";
                 return View(vm);
             }
 
+            //.....................................................................................
+
+            //errorhantering om något går tokigt med user eller fordon
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (userId == null) return Unauthorized();
 
-            var booking = _mapper.Map<Booking>(vm);
-            booking.ApplicationUserId = userId;
+            var vehicle = await _vehicleRepo.GetVehicleByIDAsync(vm.VehicleId);
+            if (vehicle == null) return NotFound();
 
-            await _bookingRepo.AddBookingAsync(booking);
-            TempData["SuccessMessage"] = "Booking created successfully!";
-            return RedirectToAction(nameof(Index));
+            //.....................................................................................
+
+            var totalPrice = vehicle.PricePerDay * days; //räkna ut totalpris för bokning
+
+            var booking = _mapper.Map<Booking>(vm); //skapa en ny bokning mha mappning
+
+            //sätt de viktiga värdena för user och fordon till min bokning
+            booking.ApplicationUserId = userId;
+            booking.TotalPrice = totalPrice;
+
+            //Ropa på mitt repo och skicka med bokningen
+            try
+            {
+                await _bookingRepo.AddBookingAsync(booking);
+                TempData["SuccessMessage"] = "Booking created successfully!";
+
+                //om allt gått bra och bokningen skapats skickas anv till fordonslistan igen
+                return RedirectToAction("Index", "VehicleVM");
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Something went wrong while saving your booking. Please try again.";
+
+                var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
+                var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles);
+                ViewBag.VehicleList = vehicleVMList;
+                ViewBag.SelectedVehicleId = vm.VehicleId;
+
+                //fixat all data som behövs igen för att återgå till vyn vid error
+                return View(vm);
+            }
         }
 
 
 
-//***********************************************************************************************************************
+        //***********************************************************************************************************************
 
         // GET: BookingVM/Edit/5
         public async Task<IActionResult> Edit(int? id)

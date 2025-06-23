@@ -31,6 +31,11 @@ namespace assignment_mvc_carrental
                 .AddDefaultTokenProviders(); //detta ska hjälpa Identity fungera
 
 
+            //hjälper till att skicka till inlogg om man vill hyra bil utan konto tex
+            builder.Services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/Identity/Account/Login";
+            });
 
 
             builder.Services.AddControllersWithViews();
