@@ -19,9 +19,6 @@ namespace assignment_mvc_carrental.Classes
         [Required(ErrorMessage = "Price is required.")]
         public double PricePerDay { get; set; }
 
-
-        public bool IsAvailable { get; set; } = true;
-
         
         [Required(ErrorMessage = "Image URL is required.")]
         public string ImageUrl1 { get; set; } = "";

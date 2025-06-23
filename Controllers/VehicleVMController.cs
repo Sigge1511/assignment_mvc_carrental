@@ -90,7 +90,7 @@ namespace assignment_mvc_carrental.Controllers
         [Authorize(Roles = "Admin")] // Endast admin kan skapa fordon
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Title,Year,PricePerDay,IsAvailable,Description,ImageUrl1,ImageUrl2")] VehicleViewModel vehicleViewModel)
+        public async Task<IActionResult> Create([Bind("Id,Title,Year,PricePerDay,Description,ImageUrl1,ImageUrl2")] VehicleViewModel vehicleViewModel)
         {            
             if (ModelState.IsValid)
             {
@@ -139,7 +139,7 @@ namespace assignment_mvc_carrental.Controllers
         [Authorize(Roles = "Admin")]
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Year,PricePerDay,IsAvailable,Description,ImageUrl1,ImageUrl2")] VehicleViewModel vehicleViewModel)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Title,Year,PricePerDay,Description,ImageUrl1,ImageUrl2")] VehicleViewModel vehicleViewModel)
         {
             if (id != vehicleViewModel.Id)
             {

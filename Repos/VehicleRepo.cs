@@ -53,7 +53,6 @@ namespace assignment_mvc_carrental.Repos
             vehicle.Title = vm.Title;
             vehicle.Year = vm.Year;
             vehicle.PricePerDay = vm.PricePerDay;
-            vehicle.IsAvailable = vm.IsAvailable;
             vehicle.Description = vm.Description;
             vehicle.ImageUrl1 = vm.ImageUrl1;
             vehicle.ImageUrl2 = vm.ImageUrl2;

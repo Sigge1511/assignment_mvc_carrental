@@ -17,7 +17,6 @@ namespace assignment_mvc_carrental.Models
         public double PricePerDay { get; set; }
 
 
-        public bool IsAvailable { get; set; } = true;
         public string Description { get; set; } = "";
 
 
