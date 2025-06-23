@@ -16,13 +16,15 @@ namespace assignment_mvc_carrental.Controllers
     {
         private readonly IBooking _bookingRepo;
         private readonly IVehicle _vehicleRepo;
+        private readonly IApplicationUser _userRepo;
         private readonly IMapper _mapper;
         private readonly UserManager<ApplicationUser> _userManager;
 
-        public BookingVMController(IBooking bookingRepo, IVehicle vehicleRepo, IMapper mapper, UserManager<ApplicationUser> userManager)
+        public BookingVMController(IBooking bookingRepo, IVehicle vehicleRepo, IApplicationUser appuserrepo, IMapper mapper, UserManager<ApplicationUser> userManager)
         {
             _bookingRepo = bookingRepo;
             _vehicleRepo = vehicleRepo;
+            _userRepo = appuserrepo;
             _mapper = mapper;
             _userManager = userManager;
         }
@@ -126,6 +128,86 @@ namespace assignment_mvc_carrental.Controllers
         }
 
 //***********************************************************************************************************************
+        //NÄR EN ADMIN SKAPAR EN NY BOKNING 
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public async Task<IActionResult> AdminCreate()
+        {
+            var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
+            var vehicleVMList = _mapper.Map<List<VehicleViewModel>>(vehicles);
+            ViewBag.VehicleList = vehicleVMList;
+
+            var customers = await _userManager.GetUsersInRoleAsync("Customer"); // <-- RÄTT SÄTT!
+            var customerVMList = _mapper.Map<List<CustomerViewModel>>(customers);
+            ViewBag.CustomerList = customerVMList;
+
+            return View("AdminCreate");
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> AdminCreate(BookingViewModel vm)
+        {
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            if (vm.StartDate < today)
+            {
+                ModelState.AddModelError(nameof(vm.StartDate), "Start date cannot be in the past.");
+            }
+
+            var days = (vm.EndDate.DayNumber - vm.StartDate.DayNumber) + 1;
+            if (days < 1)
+            {
+                ModelState.AddModelError(nameof(vm.EndDate), "End date must be the same or after the start date.");
+            }
+
+            if (!ModelState.IsValid)
+            {
+                var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
+                ViewBag.VehicleList = _mapper.Map<List<VehicleViewModel>>(vehicles);
+
+                var customers = await _userManager.GetUsersInRoleAsync("Customer");
+                ViewBag.CustomerList = _mapper.Map<List<CustomerViewModel>>(customers);
+
+                TempData["ErrorMessage"] = "Something went wrong. Please check your input.";
+                return View(vm);
+            }
+
+            var vehicle = await _vehicleRepo.GetVehicleByIDAsync(vm.VehicleId);
+            if (vehicle == null)
+            {
+                TempData["ErrorMessage"] = "Selected vehicle not found.";
+                return RedirectToAction("Index");
+            }
+
+            var totalPrice = vehicle.PricePerDay * days;
+
+            var booking = _mapper.Map<Booking>(vm);
+            booking.TotalPrice = totalPrice;
+
+            try
+            {
+                await _bookingRepo.AddBookingAsync(booking);
+                TempData["SuccessMessage"] = "Booking successfully created.";
+                return RedirectToAction("Index");
+            }
+            catch (Exception)
+            {
+                TempData["ErrorMessage"] = "Something went wrong while saving the booking.";
+
+                var vehicles = await _vehicleRepo.GetAllVehiclesAsync();
+                ViewBag.VehicleList = _mapper.Map<List<VehicleViewModel>>(vehicles);
+
+                var customers = await _userManager.GetUsersInRoleAsync("Customer");
+                ViewBag.CustomerList = _mapper.Map<List<CustomerViewModel>>(customers);
+
+                return View(vm);
+            }
+        }
+
+        //***********************************************************************************************************************
 
         // GET: BookingVM/Edit/5
         public async Task<IActionResult> Edit(int? id)
