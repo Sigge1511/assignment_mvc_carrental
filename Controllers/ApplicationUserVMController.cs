@@ -24,13 +24,15 @@ namespace assignment_mvc_carrental.Controllers
         private readonly IMapper _mapper;
         private readonly IApplicationUser _appUserRepo;
         private readonly UserManager<ApplicationUser> _userManager;
+        private readonly SignInManager<ApplicationUser> _signInManager;
 
-        public ApplicationUserVMController(ApplicationDbContext context, IMapper mapper, IApplicationUser appUserRepo, UserManager<ApplicationUser> userManager)
+        public ApplicationUserVMController(ApplicationDbContext context, IMapper mapper, IApplicationUser appUserRepo, UserManager<ApplicationUser> userManager, SignInManager<ApplicationUser> signInManager)
         {
             _context = context;
             _mapper = mapper;
             _appUserRepo = appUserRepo;
             _userManager = userManager;
+            _signInManager = signInManager;
         }
 
 //***********************************************************************************************************************
@@ -262,6 +264,26 @@ namespace assignment_mvc_carrental.Controllers
         {
             return View("~/Views/AdminViews/AdminLogin.cshtml");
         }
+
+        [HttpPost("/admin")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> AdminLogin(string email, string password)
+        {
+            var user = await _userManager.FindByEmailAsync(email); //leta användare
+
+            if (user != null && await _userManager.IsInRoleAsync(user, "Admin")) //kolla om användaren är admin
+            {
+                var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
+                if (result.Succeeded)
+                {
+                    return View("~/Views/AdminViews/AdminPanel.cshtml"); //gå vidare vid lyckad inloggning
+                }
+            }
+            // Om inloggningen misslyckas, skicka tillbaka till inloggningssidan med felmeddelande
+            TempData["ErrorMessage"] = "Invalid login or you are not an admin.";
+            return View("~/Views/AdminViews/AdminLogin.cshtml");
+        }
+
 
         //Details används inte
 
