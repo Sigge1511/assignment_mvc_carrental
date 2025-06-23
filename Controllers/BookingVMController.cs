@@ -213,14 +213,14 @@ namespace assignment_mvc_carrental.Controllers
             try
             {
                 await _bookingRepo.DeleteBookingAsync(id);
-                TempData["SuccessMessage"] = "Booking deleted.";
-                return RedirectToAction(nameof(Index));
+                TempData["SuccessMessage"] = "Reservation deleted.";
             }
             catch
             {
-                TempData["ErrorMessage"] = "Could not delete booking.";
-                return RedirectToAction(nameof(Delete), new { id });
+                TempData["ErrorMessage"] = "Could not delete reservation.";
             }
+
+            return View("Index", "Home"); 
         }
     }
 }
