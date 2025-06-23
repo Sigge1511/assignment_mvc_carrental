@@ -276,12 +276,19 @@ namespace assignment_mvc_carrental.Controllers
                 var result = await _signInManager.PasswordSignInAsync(user, password, false, false);
                 if (result.Succeeded)
                 {
-                    return View("~/Views/AdminViews/AdminPanel.cshtml"); //gå vidare vid lyckad inloggning
+                    return RedirectToAction("AdminPanel");  //gå vidare vid lyckad inloggning
                 }
             }
             // Om inloggningen misslyckas, skicka tillbaka till inloggningssidan med felmeddelande
             TempData["ErrorMessage"] = "Invalid login or you are not an admin.";
             return View("~/Views/AdminViews/AdminLogin.cshtml");
+        }
+
+        [Authorize(Roles = "Admin")]
+        [HttpGet]
+        public IActionResult AdminPanel()
+        {
+            return View("~/Views/AdminViews/AdminPanel.cshtml");
         }
 
 
