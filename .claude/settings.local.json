@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(dotnet build *)",
+      "Bash(Get-ChildItem -Path \"mvcsource/Views\" -Recurse -File)",
+      "Bash(Select-Object -First 20 FullName)"
+    ]
+  }
+}
