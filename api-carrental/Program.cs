@@ -15,7 +15,12 @@ using System.Text;
 var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString)); // <-- Se till att denna rad finns!
+    options.UseSqlServer(connectionString));
+//Retrieve my AZ password from proj user secrets
+var secretPassword = builder.Configuration["DbPassword"];
+connectionString = connectionString.Replace("{DbPassword}", secretPassword);
+
+
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
