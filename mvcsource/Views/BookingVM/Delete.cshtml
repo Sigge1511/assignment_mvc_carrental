@@ -1,0 +1,37 @@
+﻿@model assignment_mvc_carrental.ViewModels.BookingViewModel
+
+@{
+    ViewData["Title"] = "Delete Reservation";
+}
+
+<h1>Delete reservation</h1>
+<hr />
+<h5>Are you sure you want to delete this reservation?</h5>
+
+<br />
+
+@if (Model.Vehicle?.ImageUrl1 != null)
+{
+    <img src="@Model.Vehicle.ImageUrl1"
+         alt="Vehicle"
+         style="max-width: 300px; height: auto; border-radius: 8px; margin-bottom: 15px;" />
+}
+
+<div>
+    <p><strong>Customer:</strong> @Model.ApplicationUser?.FirstName @Model.ApplicationUser?.LastName</p>
+    <p><strong>Vehicle:</strong> @Model.Vehicle?.Title</p>
+    <p><strong>Pick-up:</strong> @Model.StartDate</p>
+    <p><strong>Drop-off:</strong> @Model.EndDate</p>
+    <p><strong>Total price:</strong> @Model.TotalPrice.ToString("0.00") SEK</p>
+</div>
+
+<br />
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+</form>
+
+<br />
+<a class="links" asp-action="Edit" asp-route-id="@Model?.Id">Edit reservation instead</a> |
+<a class="links" asp-controller="VehicleVM" asp-action="Index">Back to vehicle list</a>

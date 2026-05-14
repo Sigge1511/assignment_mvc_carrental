@@ -1,0 +1,349 @@
+@api_carrental_HostAddress = https://localhost:7045/api
+
+### ============================================================================
+# AUTHENTICATION ENDPOINTS
+### ============================================================================
+
+# User Registration
+POST {{api_carrental_HostAddress}}/Auth/register
+Content-Type: application/json
+
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "phoneNumber": "1234567890",
+  "address": "123 Main St",
+  "city": "Stockholm",
+  "password": "Password123!"
+}
+
+###
+
+# User Login
+POST {{api_carrental_HostAddress}}/Auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "Password123!"
+}
+
+###
+
+# Admin Login
+POST {{api_carrental_HostAddress}}/Auth/admin
+Content-Type: application/json
+
+{
+  "email": "admin@carrental.com",
+  "password": "Admin123!"
+}
+
+### ============================================================================
+# VEHICLE MANAGEMENT ENDPOINTS
+### ============================================================================
+
+# Get All Vehicles (Public)
+GET {{api_carrental_HostAddress}}/VehicleDt
+
+###
+
+# Get Single Vehicle by ID (Public)
+GET {{api_carrental_HostAddress}}/VehicleDt/1
+
+###
+
+# Create Vehicle (Admin Only) - Requires JWT Token
+POST {{api_carrental_HostAddress}}/VehicleDt
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "title": "Tesla Model 3",
+  "year": 2024,
+  "pricePerDay": 89.99,
+  "description": "Electric sedan with autopilot",
+  "imageUrl1": "https://example.com/tesla1.jpg",
+  "imageUrl2": "https://example.com/tesla2.jpg"
+}
+
+###
+
+# Update Vehicle (Admin Only) - Requires JWT Token
+PUT {{api_carrental_HostAddress}}/VehicleDt/1
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "id": 1,
+  "title": "Tesla Model 3 Updated",
+  "year": 2024,
+  "pricePerDay": 99.99,
+  "description": "Electric sedan with autopilot - Updated description",
+  "imageUrl1": "https://example.com/tesla1.jpg",
+  "imageUrl2": "https://example.com/tesla2.jpg"
+}
+
+###
+
+# Delete Vehicle (Admin Only) - Requires JWT Token
+DELETE {{api_carrental_HostAddress}}/VehicleDt/1
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### ============================================================================
+# BOOKING MANAGEMENT ENDPOINTS
+### ============================================================================
+
+# Get All Bookings (Admin Only) - Requires JWT Token
+GET {{api_carrental_HostAddress}}/BookingDt
+Authorization: Bearer YOUR_ADMIN_JWT_TOKEN_HERE
+
+###
+
+# Get Single Booking by ID (Authenticated) - Requires JWT Token
+GET {{api_carrental_HostAddress}}/BookingDt/1
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+###
+
+# Create Booking (Authenticated) - Requires JWT Token
+POST {{api_carrental_HostAddress}}/BookingDt
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "vehicleId": 1,
+  "startDate": "2024-06-01",
+  "endDate": "2024-06-05"
+}
+
+###
+
+# Update Booking (Authenticated) - Requires JWT Token
+PUT {{api_carrental_HostAddress}}/BookingDt/1
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "id": 1,
+  "vehicleId": 1,
+  "startDate": "2024-06-02",
+  "endDate": "2024-06-06"
+}
+
+###
+
+# Delete Booking (Authenticated) - Requires JWT Token
+DELETE {{api_carrental_HostAddress}}/BookingDt/1
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+### ============================================================================
+# USER MANAGEMENT ENDPOINTS
+### ============================================================================
+
+# Get All Customers (Admin Only) - Requires JWT Token
+GET {{api_carrental_HostAddress}}/AppUserDt
+Authorization: Bearer YOUR_ADMIN_JWT_TOKEN_HERE
+
+###
+
+# Get Single User by ID (Admin Only) - Requires JWT Token
+GET {{api_carrental_HostAddress}}/AppUserDt/user-id-here
+Authorization: Bearer YOUR_ADMIN_JWT_TOKEN_HERE
+
+###
+
+# Get User with Bookings (Authenticated) - Requires JWT Token
+GET {{api_carrental_HostAddress}}/AppUserDt/bookings/user-id-here
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+###
+
+# Create User (Public)
+POST {{api_carrental_HostAddress}}/AppUserDt
+Content-Type: application/json
+
+{
+  "firstName": "Jane",
+  "lastName": "Smith",
+  "email": "jane.smith@example.com",
+  "phoneNumber": "0987654321",
+  "address": "456 Oak Ave",
+  "city": "Gothenburg",
+  "password": "SecurePass456!"
+}
+
+###
+
+# Update User (Authenticated) - Requires JWT Token
+PUT {{api_carrental_HostAddress}}/AppUserDt/user-id-here
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "firstName": "Jane Updated",
+  "lastName": "Smith Updated",
+  "email": "jane.smith.updated@example.com",
+  "phoneNumber": "0987654321",
+  "address": "456 Oak Ave Updated",
+  "city": "Gothenburg"
+}
+
+###
+
+# Delete User (Admin Only) - Requires JWT Token
+DELETE {{api_carrental_HostAddress}}/AppUserDt/user-id-here
+Authorization: Bearer YOUR_ADMIN_JWT_TOKEN_HERE
+
+### ============================================================================
+# ERROR SCENARIO TESTS
+### ============================================================================
+
+# Invalid Login - Wrong Password
+POST {{api_carrental_HostAddress}}/Auth/login
+Content-Type: application/json
+
+{
+  "email": "john.doe@example.com",
+  "password": "WrongPassword!"
+}
+
+###
+
+# Invalid Login - Non-existent User
+POST {{api_carrental_HostAddress}}/Auth/login
+Content-Type: application/json
+
+{
+  "email": "nonexistent@example.com",
+  "password": "Password123!"
+}
+
+###
+
+# Create Booking - Vehicle Not Available (Conflict Scenario)
+POST {{api_carrental_HostAddress}}/BookingDt
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "vehicleId": 1,
+  "startDate": "2024-06-01",
+  "endDate": "2024-06-05"
+}
+
+###
+
+# Create Booking - Invalid Date Range
+POST {{api_carrental_HostAddress}}/BookingDt
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "vehicleId": 1,
+  "startDate": "2024-06-10",
+  "endDate": "2024-06-05"
+}
+
+###
+
+# Create Vehicle - Unauthorized (Non-Admin)
+POST {{api_carrental_HostAddress}}/VehicleDt
+Content-Type: application/json
+Authorization: Bearer YOUR_CUSTOMER_JWT_TOKEN_HERE
+
+{
+  "title": "Unauthorized Vehicle",
+  "year": 2024,
+  "pricePerDay": 50.00,
+  "description": "This should fail",
+  "imageUrl1": "https://example.com/img1.jpg",
+  "imageUrl2": "https://example.com/img2.jpg"
+}
+
+###
+
+# Get All Bookings - Unauthorized (Non-Admin)
+GET {{api_carrental_HostAddress}}/BookingDt
+Authorization: Bearer YOUR_CUSTOMER_JWT_TOKEN_HERE
+
+###
+
+# Update User - Forbidden (Updating Another User)
+PUT {{api_carrental_HostAddress}}/AppUserDt/another-user-id
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_HERE
+
+{
+  "firstName": "Hacker",
+  "lastName": "Attempt",
+  "email": "hacker@example.com",
+  "phoneNumber": "0000000000",
+  "address": "Nowhere",
+  "city": "Nowhere"
+}
+
+### ============================================================================
+# COMPLETE USER FLOW TEST
+### ============================================================================
+
+# Step 1: Register New User
+POST {{api_carrental_HostAddress}}/Auth/register
+Content-Type: application/json
+
+{
+  "firstName": "Test",
+  "lastName": "User",
+  "email": "testuser@example.com",
+  "phoneNumber": "5555555555",
+  "address": "789 Test Street",
+  "city": "Test City",
+  "password": "TestPass123!"
+}
+
+###
+
+# Step 2: Login with New User
+POST {{api_carrental_HostAddress}}/Auth/login
+Content-Type: application/json
+
+{
+  "email": "testuser@example.com",
+  "password": "TestPass123!"
+}
+
+###
+
+# Step 3: Get Available Vehicles
+GET {{api_carrental_HostAddress}}/VehicleDt
+
+###
+
+# Step 4: Create Booking
+POST {{api_carrental_HostAddress}}/BookingDt
+Content-Type: application/json
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_STEP_2
+
+{
+  "vehicleId": 1,
+  "startDate": "2024-07-01",
+  "endDate": "2024-07-03"
+}
+
+###
+
+# Step 5: Get User's Bookings
+GET {{api_carrental_HostAddress}}/AppUserDt/bookings/YOUR_USER_ID_FROM_STEP_2
+Authorization: Bearer YOUR_JWT_TOKEN_FROM_STEP_2
+
+### ============================================================================
+# NOTES
+### ============================================================================
+# 1. Replace YOUR_JWT_TOKEN_HERE with actual JWT tokens from login responses
+# 2. Replace user-id-here with actual user IDs from your database
+# 3. Test dates should be adjusted based on your current date and available vehicles
+# 4. Some tests may fail if the required data doesn't exist in your database
+# 5. Always run the registration/login tests first to get valid tokens
+# 6. Admin endpoints require users with "Admin" role
+# 7. Vehicle availability checks depend on existing bookings in the database

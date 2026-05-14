@@ -1,0 +1,91 @@
+html {
+    font-size: 14px;
+    background-color: #222831;
+    color: #EEEEEE;
+}
+
+@media (min-width: 768px) {
+    html {
+        font-size: 16px;
+        background-color: #222831;
+        color: #EEEEEE;
+    }
+}
+
+.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+  box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
+}
+
+html {
+  position: relative;
+  min-height: 100%;
+}
+
+body {
+    margin-bottom: 20px;
+    background-color: #222831;
+    color: #EEEEEE;
+}
+
+.links {
+    color: #76ABAE;
+    transition: color 1.5s ease;
+}
+.links:hover {
+    color: #EEEEEE;
+    transition: color 1.5s ease;
+}
+
+.table {
+    color: #EEEEEE;
+    max-width: 90%;
+    font-size: 18px;
+}
+
+.logo {
+    display: inline-flex;
+    float: right;
+}
+
+
+.btn-primary {
+    background-color: #76ABAE; 
+    border-color: #76ABAE;
+    font-weight: 600;
+}
+
+    .btn-primary:hover,
+    .btn-primary:focus {
+        background-color: #76ABAE;
+        border-color: #76ABAE;
+    }
+
+
+
+
+
+/* ----------------------------------------------------------------------------------------------------------------------- */
+/* Färga hela navbaren */
+.mynavbar {
+    background-color: #76ABAE;
+}
+
+/* Ändra färgen på länkarna */
+.mynavbar .nav-link,
+.mynavbar .navbar-brand {
+    color: #EEEEEE;
+}    
+
+/* Hover-effekt */
+.mynavbar .nav-link:hover,
+.mynavbar .navbar-brand:hover {
+    color: #222831; /* En accentfärg */
+    transition: color 1.5s ease;
+}
+.mynavbar .nav-link {
+    transition: color 1.5s ease;
+}
+/* ----------------------------------------------------------------------------------------------------------------------- */
+. form-control-large {
+    height: calc(2.25rem * 3); /* ca 6.75rem, dvs ca tre rader i BS? */
+}

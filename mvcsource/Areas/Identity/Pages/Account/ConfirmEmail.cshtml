@@ -1,0 +1,11 @@
+﻿@* @page
+@using assignment_mvc_carrental.Areas.Identity.Pages.Account
+@using assignment_mvc_carrental.ViewModels
+
+@model assignment_mvc_carrental.Areas.Identity.Pages.Account.ConfirmEmailModel
+@{
+    ViewData["Title"] = "Confirm email";
+}
+
+<h1>@ViewData["Title"]</h1>
+@await Html.PartialAsync("_StatusMessage", Model.StatusMessage) *@

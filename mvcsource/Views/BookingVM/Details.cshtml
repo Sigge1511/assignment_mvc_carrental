@@ -1,0 +1,25 @@
+﻿@using assignment_mvc_carrental.ViewModels;
+@using assignment_mvc_carrental.Models;
+@model assignment_mvc_carrental.ViewModels.BookingViewModel
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<br>
+<h1>Reservation details</h1>
+
+<div>
+    <hr />
+    @* <p><strong>Customer:</strong> @Model.CustomerFirstName @Model.CustomerLastName</p>
+    <p><strong>Vehicle:</strong> @Model.VehicleTitle</p> *@
+    <p><strong>Pick up:</strong> @Model.StartDate</p>
+    <p><strong>Drop off:</strong> @Model.EndDate</p>
+    <p><strong>Total price:</strong> @Model.TotalPrice</p>
+       
+</div>
+<div>
+    <a class="links" asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a class="links" asp-action="Delete" asp-route-id="@Model?.Id">Delete</a> |            Endast för admin?? 
+    <a class="links" asp-action="Index">Back to list</a>
+</div>

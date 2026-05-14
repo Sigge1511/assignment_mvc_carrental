@@ -1,0 +1,55 @@
+﻿@model IEnumerable<assignment_mvc_carrental.ViewModels.BookingViewModel>
+
+@{
+    ViewData["Title"] = "All reservations";
+}
+<br>
+<h1>All reservations</h1>
+
+<p>
+    <a class="btn btn-primary mb-3" asp-action="AdminCreate">Create new reservation</a>
+</p>
+
+@if (!Model.Any())
+{
+    <div class="alert alert-info">No bookings found.</div>
+}
+else
+{
+    <table class="table table-dark table-striped">
+        <thead>
+            <tr>
+                <th>Vehicle</th>
+                <th>Customer</th>
+                <th>Start</th>
+                <th>End</th>
+                <th>Total price</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model)
+            {
+                <tr>
+                    <td>
+                        <img src="@item.Vehicle?.ImageUrl1"
+                             alt="Vehicle"
+                             style="height: 50px; width: auto; border-radius: 5px; margin-bottom: 5px;" />
+                        <br />
+                        @item.Vehicle?.Title
+                    </td>
+                    <td>
+                        @($"{item.ApplicationUser?.FirstName} {item.ApplicationUser?.LastName}")
+                    </td>
+                    <td>@item.StartDate.ToShortDateString()</td>
+                    <td>@item.EndDate.ToShortDateString()</td>
+                    <td>@item.TotalPrice.ToString("0.00") SEK</td>
+                    <td>
+                        <a class="links" asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
+                        <a class="links" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

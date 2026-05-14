@@ -1,0 +1,120 @@
+﻿@using Microsoft.AspNetCore.Identity
+@using assignment_mvc_carrental.Models
+@using assignment_mvc_carrental.ViewModels
+@using Microsoft.AspNetCore.Mvc.Rendering
+
+@model assignment_mvc_carrental.ViewModels.BookingViewModel
+
+@{
+    ViewData["Title"] = "Create Reservation";
+    var vehicles = ViewBag.VehicleList as SelectList;
+    var selectedId = ViewBag.SelectedVehicleId as int?;
+
+}
+
+@* @if (!isLoggedIn)
+{
+    <div class="alert alert-warning">
+        In order to make a reservation, you need to be logged in.<br />
+        <br />
+        <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary mt-2">Log in</a>
+        <a asp-controller="ApplicationUserVM" asp-action="Register" class="btn btn-secondary mt-2">Register</a>
+    </div>
+} *@
+
+else
+{
+    <h3>Create a new reservation</h3>
+    <hr />
+
+    <div id="vehicleImageContainer" style="margin:15px 0; max-width: 60%;"></div>
+
+    <form asp-action="Create" method="post">
+        <div class="form-group">
+            <label for="VehicleId">Select vehicle</label>
+            <select id="VehicleId" name="VehicleId" class="form-control" onchange="onVehicleChange()">
+                <option value="">---</option>
+                @foreach (var v in ViewBag.VehicleList as List<assignment_mvc_carrental.ViewModels.VehicleViewModel>)
+                {
+                    var selected = selectedId.HasValue && v.Id == selectedId.Value ? "selected" : "";
+                    var optionHtml = $"<option value='{v.Id}' data-price='{v.PricePerDay}' data-imageurl='{v.ImageUrl1}' {selected}>{v.Title}</option>";
+                    @Html.Raw(optionHtml)
+                }
+            </select>
+            <span asp-validation-for="VehicleId" class="text-danger"></span>
+        </div>
+
+        <br />
+        <p>Price per day: <span id="pricePerDay">-</span> SEK</p>
+
+        <div class="form-group">
+            <label asp-for="StartDate" class="control-label">Pick up</label>
+            <input asp-for="StartDate" type="date" class="form-control" id="StartDate" />
+            <span asp-validation-for="StartDate" class="text-danger"></span>
+        </div>
+
+        <div class="form-group">
+            <label asp-for="EndDate" class="control-label">Drop off</label>
+            <input asp-for="EndDate" type="date" class="form-control" id="EndDate" />
+            <span asp-validation-for="EndDate" class="text-danger"></span>
+        </div>
+
+        <br />
+        <p>Total price: <span id="totalPrice">-</span> SEK</p>
+
+        <br />
+        <button type="submit" class="btn btn-primary">Add reservation</button>
+    </form>
+
+    @section Scripts {
+        <script>
+            function onVehicleChange() {
+                updatePrice();
+                updateVehicleImage();
+            }
+
+            function updatePrice() {
+                const select = document.getElementById("VehicleId");
+                if (!select || select.selectedIndex < 0) return;
+
+                const selectedOption = select.options[select.selectedIndex];
+                const pricePerDay = selectedOption.dataset.price || "-";
+                document.getElementById("pricePerDay").innerText = pricePerDay;
+
+                const startInput = document.getElementById("StartDate");
+                const endInput = document.getElementById("EndDate");
+                const startDate = new Date(startInput.value);
+                const endDate = new Date(endInput.value);
+                let total = "-";
+
+                if (startInput.value && endInput.value && endDate >= startDate) {
+                    const diffTime = Math.abs(endDate - startDate);
+                    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                    total = diffDays * pricePerDay;
+                }
+
+                document.getElementById("totalPrice").innerText = total;
+            }
+
+            function updateVehicleImage() {
+                const select = document.getElementById("VehicleId");
+                const selectedOption = select.options[select.selectedIndex];
+                const imageUrl = selectedOption.dataset.imageurl;
+
+                const container = document.getElementById("vehicleImageContainer");
+                if (imageUrl) {
+                    container.innerHTML = `<img src="${imageUrl}" alt="Selected vehicle" style="max-width: 100%; height: auto; border-radius: 8px;" />`;
+                } else {
+                    container.innerHTML = "";
+                }
+            }
+
+            window.onload = function () {
+                onVehicleChange();
+                document.getElementById("StartDate").addEventListener("change", updatePrice);
+                document.getElementById("EndDate").addEventListener("change", updatePrice);
+            };
+        </script>
+    }
+}
+

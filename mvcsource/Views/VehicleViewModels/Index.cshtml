@@ -1,0 +1,68 @@
+﻿@model IEnumerable<assignment_mvc_carrental.ViewModels.VehicleViewModel>
+@using Microsoft.AspNetCore.Identity
+@using assignment_mvc_carrental.Models
+
+
+@{
+    ViewData["Title"] = "Index";
+}
+<br>
+<h1>Our premium vehicles</h1>
+
+@* @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+{
+    <a class="links" asp-action="Create">Add new vehicle</a>
+} *@
+<br>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                Preview
+            </th>
+            <th>
+                Name
+            </th>
+            <th>
+                Year Made
+            </th>
+            <th>
+                Rental price per day
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Description)
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                <a class="links" asp-action="Details" asp-route-id="@item.Id">
+                        <img src="@item.ImageUrl1" alt="Bild 1" style="max-width: 100%;" />
+                </a>
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Year)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.PricePerDay) kronor
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Description)
+            </td>
+            <td>
+                <a class="links" asp-action="Details" asp-route-id="@item.Id">Details</a> 
+                @* @if (SignInManager.IsSignedIn(User) && User.IsInRole("Admin"))
+                {
+                    <a class="links" asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                    <a class="links" asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                } *@
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

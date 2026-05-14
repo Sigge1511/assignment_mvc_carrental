@@ -1,0 +1,109 @@
+﻿@using assignment_mvc_carrental.ViewModels
+@model assignment_mvc_carrental.ViewModels.BookingViewModel
+@{
+    ViewData["Title"] = "Edit Reservation";
+    var vehicles = ViewBag.VehicleList as List<VehicleViewModel>;
+    var selectedId = ViewBag.SelectedVehicleId as int?;
+}
+<br>
+<h3>Edit reservation</h3>
+<hr />
+
+<div id="vehicleImageContainer" style="margin:15px 0; max-width: 60%;"></div>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+
+    <div class="form-group">
+        <label for="VehicleId">Select vehicle</label>
+        <select id="VehicleId" name="VehicleId" class="form-control" onchange="onVehicleChange()">
+            <option value="">---</option>
+            @foreach (var v in vehicles)
+            {
+                var selected = selectedId.HasValue && v.Id == selectedId.Value ? "selected" : "";
+                var optionHtml = $"<option value='{v.Id}' data-price='{v.PricePerDay}' data-imageurl='{v.ImageUrl1}' {selected}>{v.Title}</option>";
+                @Html.Raw(optionHtml)
+            }
+        </select>
+        <span asp-validation-for="VehicleId" class="text-danger"></span>
+    </div>
+
+    <br />
+    <p>Price per day: <span id="pricePerDay">-</span> SEK</p>
+
+    <div class="form-group">
+        <label>Customer</label>
+        <input class="form-control" value="@($"{Model.ApplicationUser?.FirstName} {Model.ApplicationUser?.LastName}")" disabled />
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartDate" class="control-label">Pick up</label>
+        <input asp-for="StartDate" type="date" class="form-control" id="StartDate" />
+        <span asp-validation-for="StartDate" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="EndDate" class="control-label">Drop off</label>
+        <input asp-for="EndDate" type="date" class="form-control" id="EndDate" />
+        <span asp-validation-for="EndDate" class="text-danger"></span>
+    </div>
+
+    <br />
+    <p>Total price: <span id="totalPrice">-</span> SEK</p><br />
+
+    <button type="submit" class="btn btn-primary">Save changes</button>
+</form>
+
+<br />
+@* <a class="links" asp-controller="BookingVM" asp-action="Index">Back to all reservations</a>
+ *@
+@section Scripts {
+    <script>
+        function onVehicleChange() {
+            updatePrice();
+            updateVehicleImage();
+        }
+
+        function updatePrice() {
+            const select = document.getElementById("VehicleId");
+            if (!select || select.selectedIndex < 0) return;
+
+            const selectedOption = select.options[select.selectedIndex];
+            const pricePerDay = selectedOption.dataset.price || "-";
+            document.getElementById("pricePerDay").innerText = pricePerDay;
+
+            const startInput = document.getElementById("StartDate");
+            const endInput = document.getElementById("EndDate");
+            const startDate = new Date(startInput.value);
+            const endDate = new Date(endInput.value);
+            let total = "-";
+
+            if (startInput.value && endInput.value && endDate >= startDate) {
+                const diffTime = Math.abs(endDate - startDate);
+                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                total = diffDays * pricePerDay;
+            }
+
+            document.getElementById("totalPrice").innerText = total;
+        }
+
+        function updateVehicleImage() {
+            const select = document.getElementById("VehicleId");
+            const selectedOption = select.options[select.selectedIndex];
+            const imageUrl = selectedOption.dataset.imageurl;
+
+            const container = document.getElementById("vehicleImageContainer");
+            if (imageUrl) {
+                container.innerHTML = `<img src="${imageUrl}" alt="Selected vehicle" style="max-width: 100%; height: auto; border-radius: 8px;" />`;
+            } else {
+                container.innerHTML = "";
+            }
+        }
+
+        window.onload = function () {
+            onVehicleChange();
+            document.getElementById("StartDate").addEventListener("change", updatePrice);
+            document.getElementById("EndDate").addEventListener("change", updatePrice);
+        };
+    </script>
+}

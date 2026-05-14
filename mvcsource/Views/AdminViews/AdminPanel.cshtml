@@ -1,0 +1,45 @@
+﻿@{
+    ViewData["Title"] = "Admin Panel";
+}
+
+<div class="container mt-5">
+    <h2 class="text-center mb-4 text-white">Welcome, Admin</h2>
+    <hr class="border-light" />
+
+    <div class="row text-center">
+
+        <!-- VEHICLES -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark text-white h-100 shadow">
+                <div class="card-body">
+                    <h4 class="card-title">Manage Vehicles</h4>
+                    <p class="card-text">View, add, edit or delete vehicles available for rental.</p>
+                    <a asp-controller="VehicleVM" asp-action="Index" class="btn btn-primary w-100">Go to Vehicles</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- CUSTOMERS -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark text-white h-100 shadow">
+                <div class="card-body">
+                    <h4 class="card-title">Manage Customers</h4>
+                    <p class="card-text">View, edit or remove registered customers.</p><br>
+                    <a asp-controller="ApplicationUserVM" asp-action="Index" class="btn btn-primary w-100">Go to Customers</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- BOOKINGS -->
+        <div class="col-md-4 mb-4">
+            <div class="card bg-dark text-white h-100 shadow">
+                <div class="card-body">
+                    <h4 class="card-title">Manage Bookings</h4>
+                    <p class="card-text">List and delete all customer bookings.</p><br>
+                    <a asp-controller="BookingVM" asp-action="Index" class="btn btn-primary w-100">Go to Bookings</a>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>

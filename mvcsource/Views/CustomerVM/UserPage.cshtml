@@ -1,0 +1,94 @@
+﻿@model assignment_mvc_carrental.ViewModels.CustomerViewModel
+
+@{
+    ViewData["Title"] = "My Profile";
+    var today = DateOnly.FromDateTime(DateTime.Today);
+
+
+    //sortera bokningarna som finns kopplade till kunden
+    var upcomingBookings = Model.Bookings
+        .Where(b => b.StartDate >= today)
+        .OrderBy(b => b.StartDate)
+        .ToList();
+
+    var pastBookings = Model.Bookings
+        .Where(b => b.EndDate < today)
+        .OrderByDescending(b => b.EndDate)
+        .ToList();
+}
+
+<h3>Hi @Model.FirstName!</h3>
+<hr />
+
+<div class="row">
+    <!-- Customer Info -->
+    <div class="col-md-4">
+        <h4>My Information</h4>
+        <hr />
+        <p><strong>First Name:</strong> @Model.FirstName</p>
+        <p><strong>Last Name:</strong> @Model.LastName</p>
+        <p><strong>Email:</strong> @Model.Email</p>
+        <p><strong>Phone Number:</strong> @Model.PhoneNumber</p>
+        <p><strong>Address:</strong> @Model.Address</p>
+        <p><strong>City:</strong> @Model.City</p>
+
+        <a class="btn btn-primary mt-3" asp-controller="ApplicationUserVM" asp-action="Edit" asp-route-id="@Model.Id">
+            Edit my information
+        </a>
+    </div>
+
+    <!-- kommande bokningar -->
+    <div class="col-md-4">
+        <h4>Upcoming Bookings</h4>
+        <hr />
+        @if (!upcomingBookings.Any())
+        {
+            <div class="alert alert-info">You have no upcoming bookings.</div>
+        }
+        else
+        {
+            <ul class="list-group">
+                @foreach (var b in upcomingBookings)
+                {
+                    <li class="list-group-item">
+                        <strong>@b.Vehicle?.Title</strong><br />
+                        @b.StartDate → @b.EndDate<br />
+                        <small>Total: @b.TotalPrice SEK</small>
+                        <br>
+                        <div class="mt-2">
+                            <a asp-controller="BookingVM" asp-action="Edit" asp-route-id="@b.Id" class="btn btn-sm btn-primary me-2">
+                                Edit
+                            </a>
+                            <a asp-controller="BookingVM" asp-action="Delete" asp-route-id="@b.Id" class="btn btn-sm btn-danger">
+                                Delete
+                            </a>
+                        </div>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+
+    <!-- tidigare bokningar -->
+    <div class="col-md-4">
+        <h4>Past Bookings</h4>
+        <hr />
+        @if (!pastBookings.Any())
+        {
+            <div class="alert alert-info">No previous bookings found.</div>
+        }
+        else
+        {
+            <ul class="list-group">
+                @foreach (var b in pastBookings)
+                {
+                    <li class="list-group-item">
+                        <strong>@b.Vehicle?.Title</strong><br />
+                        @b.StartDate → @b.EndDate<br />
+                        <small>Total: @b.TotalPrice SEK</small>
+                    </li>
+                }
+            </ul>
+        }
+    </div>
+</div>
