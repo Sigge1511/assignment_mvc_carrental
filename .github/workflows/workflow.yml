@@ -3,7 +3,7 @@ name: Deploy Monorepo to Azure
 on:
   push:
     branches:
-      - master
+      - clean-main
 
 jobs:
   # SPÅR 1: BYGG OCH DEPLOY FÖR API
