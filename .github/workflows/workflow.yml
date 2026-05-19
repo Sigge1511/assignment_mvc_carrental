@@ -50,7 +50,7 @@ jobs:
         run: |
           dotnet restore
           dotnet build --no-restore --configuration Release
-          dotnet publish --no-build --configuration Release --output ./publish
+          dotnet publish --no-build --configuration Release --output ../publish_mvc
         working-directory: mvcsource
 
       - name: Azure Login
@@ -62,4 +62,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'siggesbilar'
-          package: './mvcsource/publish'
+          package: './publish_mvc'
