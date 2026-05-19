@@ -35,7 +35,7 @@ jobs:
           app-name: 'apiprojbilar'
           package: './api-carrental/publish'
 
-  # SPÅR 2: BYGG OCH DEPLOY FÖR MVC
+  # SPÅR 2: BYGG OCH DEPLOY FÖR MVC   
   deploy-mvc:
     runs-on: ubuntu-latest
     steps:
