@@ -22,7 +22,7 @@ jobs:
           dotnet restore
           dotnet build --no-restore --configuration Release
           dotnet publish --no-build --configuration Release --output ./publish
-        working-directory: src/api-carrental
+        working-directory: api-carrental
 
       - name: Azure Login
         uses: azure/login@v2
@@ -33,7 +33,7 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'apiprojbilar'
-          package: './src/api-carrental/publish'
+          package: './api-carrental/publish'
 
   # SPÅR 2: BYGG OCH DEPLOY FÖR MVC
   deploy-mvc:
@@ -51,7 +51,7 @@ jobs:
           dotnet restore
           dotnet build --no-restore --configuration Release
           dotnet publish --no-build --configuration Release --output ./publish
-        working-directory: src/mvcsource
+        working-directory: mvcsource
 
       - name: Azure Login
         uses: azure/login@v2
@@ -62,4 +62,4 @@ jobs:
         uses: azure/webapps-deploy@v3
         with:
           app-name: 'siggesbilar'
-          package: './src/mvcsource/publish'
+          package: './mvcsource/publish'
