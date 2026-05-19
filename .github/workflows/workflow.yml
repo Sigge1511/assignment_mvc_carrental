@@ -61,5 +61,5 @@ jobs:
       - name: Deploy MVC to Azure
         uses: azure/webapps-deploy@v3
         with:
-          app-name: '(DIN_MVC_APP_SERVICE_NAME)'
+          app-name: 'siggesbilar'
           package: './src/mvcsource/publish'
