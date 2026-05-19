@@ -1,0 +1,65 @@
+name: Deploy Monorepo to Azure
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  # SPÅR 1: BYGG OCH DEPLOY FÖR API
+  deploy-api:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0'
+
+      - name: Restore & Build API
+        run: |
+          dotnet restore
+          dotnet build --no-restore --configuration Release
+          dotnet publish --no-build --configuration Release --output ./publish
+        working-directory: src/api-carrental
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy API to Azure
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: 'apiprojbilar'
+          package: './src/api-carrental/publish'
+
+  # SPÅR 2: BYGG OCH DEPLOY FÖR MVC
+  deploy-mvc:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0'
+
+      - name: Restore & Build MVC
+        run: |
+          dotnet restore
+          dotnet build --no-restore --configuration Release
+          dotnet publish --no-build --configuration Release --output ./publish
+        working-directory: src/mvcsource
+
+      - name: Azure Login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy MVC to Azure
+        uses: azure/webapps-deploy@v3
+        with:
+          app-name: '(DIN_MVC_APP_SERVICE_NAME)'
+          package: './src/mvcsource/publish'
