@@ -1,8 +1,6 @@
 using assignment_mvc_carrental.Data;
 using assignment_mvc_carrental.Models;
 using AutoMapper;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 
 namespace api_carrental
 {
@@ -15,19 +13,7 @@ namespace api_carrental
             // Add services to the container.
             builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-            // ********** DATABASE CONFIGURATION **********
-            var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
-            builder.Services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlServer(connectionString));
-
-            // ********** IDENTITY CONFIGURATION **********
-            builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options =>
-            {
-                options.SignIn.RequireConfirmedAccount = false;
-            })
-            .AddEntityFrameworkStores<ApplicationDbContext>()
-            .AddDefaultTokenProviders();
-
+            
             builder.Services.AddHttpClient("CarRentalAPI", client =>
             {
                 // API-projektet körs på HTTPS port 7045 (enligt launchSettings.json)

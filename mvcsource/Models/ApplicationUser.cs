@@ -1,9 +1,8 @@
-﻿using Microsoft.AspNetCore.Identity;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace assignment_mvc_carrental.Models
 {
-    public class ApplicationUser : IdentityUser //viktigt att ärva från IdentityUser för att få användarhantering
+    public class ApplicationUser 
     {
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
@@ -12,7 +11,7 @@ namespace assignment_mvc_carrental.Models
 
 
         [Required]
-        public override string Email { get; set; }
+        public string Email { get; set; }
 
 
         public ICollection<Booking>? Bookings { get; set; } // Håller koll på alla bokningar som användaren har gjort
