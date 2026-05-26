@@ -59,7 +59,7 @@ public async Task<IActionResult> Index()
     }
     catch (Exception ex)
     {
-        TempData["ErrorMessage"] = $"An error occured: ({ex.Message})";
+        TempData["ErrorMessage"] = $"DEBUG: {ex.Message} - {ex.StackTrace}";            
         return View("~/Views/VehicleViewModels/Index.cshtml", new List<VehicleViewModel>());
     }
 }
