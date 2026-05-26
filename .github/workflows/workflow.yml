@@ -37,13 +37,13 @@ jobs:
       - name: Build and push Docker image
         run: |
           docker build -f ./api-carrental/Dockerfile -t siggesregister2026.azurecr.io/api-carrental:${{ github.sha }} .
-          docker push siggesregister2026.azurecr.io/api-carrental:${{ github.sha }}
+          docker push siggesregister2026.azurecr.io/api-carrental:latest
 
       # Säger åt api-aca att rulla ut den nya Docker-bilden
       - name: Deploy API to Azure Container App
         uses: azure/container-apps-deploy-action@v1
         with:
-          imageToDeploy: siggesregister2026.azurecr.io/api-carrental:${{ github.sha }}
+          imageToDeploy: siggesregister2026.azurecr.io/api-carrental:latest
           containerAppName: 'api-aca'
           resourceGroup: 'DefaultResourceGroup-NEU'
 
