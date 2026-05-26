@@ -29,23 +29,23 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
 
-      # Loggar in på ditt ACR direkt via din befintliga Azure-inloggning
+# Loggar in på ditt ACR
       - name: Log in to Azure Container Registry
         run: az acr login --name siggesregister2026
 
-      # Bygger containern utifrån din Dockerfile och taggar den med GitHub-commitens ID
+      # Bygger och pushar med :latest som tagg
       - name: Build and push Docker image
         run: |
-          docker build -f ./api-carrental/Dockerfile -t siggesregister2026.azurecr.io/api-carrental:${{ github.sha }} .
+          docker build -f ./api-carrental/Dockerfile -t siggesregister2026.azurecr.io/api-carrental:latest .
           docker push siggesregister2026.azurecr.io/api-carrental:latest
 
-      # Säger åt api-aca att rulla ut den nya Docker-bilden
-      - name: Deploy API to Azure Container App
-        uses: azure/container-apps-deploy-action@v1
-        with:
-          imageToDeploy: siggesregister2026.azurecr.io/api-carrental:latest
-          containerAppName: 'api-aca'
-          resourceGroup: 'DefaultResourceGroup-NEU'
+# Vi tvingar Azure att uppdatera appen till den senaste "latest"-bilden
+      - name: Deploy to Azure Container App
+        run: |
+          az containerapp update \
+            --name api-aca \
+            --resource-group DefaultResourceGroup-NEU \
+            --image siggesregister2026.azurecr.io/api-carrental:latest
 
   # SPÅR 2: BYGG OCH DEPLOY FÖR MVC   
   deploy-mvc:
