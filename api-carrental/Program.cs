@@ -1,34 +1,32 @@
 using api_carrental.Data;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using api_carrental.Dtos;
+using api_carrental.Models;
 using api_carrental.Repos;
-using AutoMapper;
-using Swashbuckle.AspNetCore;
-using Swashbuckle.AspNetCore.SwaggerGen;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
+var builder = WebApplication.CreateBuilder(args); // Lade till args här igen för standardhantering
 
-var builder = WebApplication.CreateBuilder();
-var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
-builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(connectionString));
-//Retrieve my AZ password from proj user secrets
+// 1. Hämta och förbered Connection String FÖRST
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection")
+    ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
+
+// Retrieve my AZ password from proj user secrets och byt ut i strängen
 var secretPassword = builder.Configuration["DbPassword"];
 connectionString = connectionString.Replace("{DbPassword}", secretPassword);
 
-
+// 2. Registrera DbContext med den FÄRDIGA strängen
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+    options.UseSqlServer(connectionString));
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
-
-
 builder.Services.AddControllers();
 
-// Register Identity services
+// 3. Register Identity services
 builder.Services.AddIdentity<ApplicationUserDto, IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>()
     .AddDefaultTokenProviders();
@@ -61,30 +59,19 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 //***************** API STUFF *****************
-
-
 builder.Services.AddScoped<IVehicleRepo, VehicleRepo>();
 builder.Services.AddScoped<IBookingRepo, BookingRepo>();
 builder.Services.AddScoped<IApplicationUser, ApplicationUserRepo>();
 
-
-
-
-
-
 var app = builder.Build();
-if (app.Environment.IsDevelopment())
-{
-    //app.MapOpenApi();
-}
 
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
+}
 
-
-};
+// SEEDNING AV ROLLER OCH ADMIN (Ändrat till ApplicationUser)
 using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
@@ -130,7 +117,6 @@ using (var scope = app.Services.CreateScope())
 
         if (result.Succeeded)
         {
-            // Add admin role to the user
             var addToRoleResult = await userManager.AddToRoleAsync(newAdmin, "Admin");
             if (addToRoleResult.Succeeded)
             {
@@ -156,7 +142,6 @@ using (var scope = app.Services.CreateScope())
     }
     else
     {
-        // Ensure existing admin user has the Admin role
         if (!await userManager.IsInRoleAsync(adminUser, "Admin"))
         {
             var addToRoleResult = await userManager.AddToRoleAsync(adminUser, "Admin");
@@ -179,8 +164,12 @@ using (var scope = app.Services.CreateScope())
         }
     }
 }
+
 app.UseHttpsRedirection();
+
 app.UseAuthentication(); // Must be before UseAuthorization
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();

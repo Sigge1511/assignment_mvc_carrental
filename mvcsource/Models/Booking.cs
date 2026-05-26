@@ -19,7 +19,7 @@ namespace assignment_mvc_carrental.Models
         [Required(ErrorMessage = "Customer ID is required.")]
         public string ApplicationUserId { get; set; } = "";
 
-        public ApplicationUser ApplicationUser { get; set; }
+        public required ApplicationUser ApplicationUser { get; set; }
 
 
         // ********* Datum *********

@@ -41,7 +41,6 @@ namespace api_carrental.Controllers
         //HÄMTA ALLA KUNDER FÖR LISTA OCH ÖVERSIKT
         // GET: api/<AppUserDtController>
         [HttpGet]
-        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<ApplicationUserDto>>> GetCustomersIndexAsync()
         {
             try
@@ -68,7 +67,6 @@ namespace api_carrental.Controllers
 
         //HÄMTA ENSKILD KUND
         // GET api/<AppUserDtController>/5
-        [Authorize(Roles = "Admin")]
         [HttpGet("{id}")]
         public async Task<ActionResult<ApplicationUserDto>> GetUserByIdAsync(string id)
         {
@@ -167,7 +165,6 @@ namespace api_carrental.Controllers
         // UPPDATERA KUND
         // PUT api/<AppUserDtController>/5
         [HttpPut("{id}")]
-        [Authorize]
         public async Task<IActionResult> PutCustomerAsync(string id, [FromBody] ApplicationUserDto appUser)
         {
             if (!ModelState.IsValid)
@@ -220,7 +217,6 @@ namespace api_carrental.Controllers
         // RADERA KUND
         // DELETE api/<AppUserDtController>/5
         [HttpDelete("{id}")]
-        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> DeleteUserConfirmed(string id)
         {
             try

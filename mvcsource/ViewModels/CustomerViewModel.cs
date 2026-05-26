@@ -31,8 +31,8 @@ namespace assignment_mvc_carrental.ViewModels
         public string Email { get; set; }
 
 
-        [BindNever] //hjälper till med strul vid edit av kunder
-        public string? Password { get; set; } // Endast för registreringen
+        [BindNever] 
+        public string? Password { get; set; } // only when registering a new user, not when editing an existing user
 
 
 
