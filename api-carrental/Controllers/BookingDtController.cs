@@ -22,7 +22,6 @@ namespace api_carrental.Controllers
         }
 //******************* HÄMTA ALLA BOKNINGAR ***********************
         // GET: api/<BookingController>
-        [Authorize(Roles = "Admin")]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<BookingDto>>> GetIndexAsync()
         {
@@ -32,7 +31,6 @@ namespace api_carrental.Controllers
 //******************* HÄMTA EN BOKNING VIA ID ***********************
         // GET api/<BookingController>/5
         [HttpGet("{id}")]
-        [Authorize]
         public async Task<ActionResult<BookingDto>> Get(int id)
         {
             var booking = await _bookingRepo.GetBookingByIdAsync(id);
@@ -43,7 +41,6 @@ namespace api_carrental.Controllers
         // POST api/<BookingController>
         // DVS SKAPA NY BOKNING
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<BookingDto>> Post([FromBody] BookingDto booking)
         {
             var vehicle = await _vehicleRepo.GetVehicleByIDAsync(booking.VehicleId);

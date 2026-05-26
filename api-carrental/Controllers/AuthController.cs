@@ -1,8 +1,7 @@
 ﻿using api_carrental.Data;
 using api_carrental.Dtos;
+using api_carrental.Models;
 using api_carrental.Repos;
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -18,37 +17,37 @@ namespace api_carrental.Controllers
     {
         private readonly ApplicationDbContext _applicationDbContext;
         private readonly IApplicationUser _applicationUser;
-        private readonly UserManager<ApplicationUserDto> _userManager;
-        private readonly SignInManager<ApplicationUserDto> _signInManager;
+        private readonly UserManager<ApplicationUser> _userManager; // Ändrad till ApplicationUser
         private readonly IConfiguration _configuration;
 
         public AuthController(ApplicationDbContext applicationDbContext,
                                     IApplicationUser applicationUser,
-                                    UserManager<ApplicationUserDto> userManager,
-                                    SignInManager<ApplicationUserDto> signInManager,
+                                    UserManager<ApplicationUser> userManager, // Ändrad till ApplicationUser
                                     IConfiguration configuration)
         {
             _applicationDbContext = applicationDbContext;
             _applicationUser = applicationUser;
             _userManager = userManager;
-            _signInManager = signInManager;
             _configuration = configuration;
         }
+
         //***************************************************************************************************************
 
-        [HttpPost("/admin")]
-        [ValidateAntiForgeryToken]
+        [HttpPost("admin")] // Ändrad rutt till api/auth/admin (tog bort /)
         public async Task<IActionResult> AdminLogin(LoginUserDto userDto)
         {
             try
             {
                 var user = await _userManager.FindByEmailAsync(userDto.Email);
-                var passwordValid = await _userManager.CheckPasswordAsync(user, userDto.Password);
-                // Bool som jämför password från user och det som skickas in userDto.Password dvs
-
-                if (user == null || passwordValid == false) // För att inte ge ut om bara password eller User är felaktigt.
+                if (user == null)
                 {
-                    return BadRequest("Something went wrong, please try again."); // Skickas
+                    return BadRequest("Something went wrong, please try again.");
+                }
+
+                var passwordValid = await _userManager.CheckPasswordAsync(user, userDto.Password);
+                if (!passwordValid)
+                {
+                    return BadRequest("Something went wrong, please try again.");
                 }
 
                 // Check if user is admin
@@ -61,10 +60,12 @@ namespace api_carrental.Controllers
                 // Generate JWT Token
                 var token = GenerateJwtToken(user, roles);
 
-                return Ok(new {
+                return Ok(new
+                {
                     message = "Logged in as admin",
                     token = token,
-                    user = new {
+                    user = new
+                    {
                         email = user.Email,
                         roles = roles
                     }
@@ -78,7 +79,7 @@ namespace api_carrental.Controllers
 
         //***************************************************************************************************************
 
-        [HttpPost("/register")]
+        [HttpPost("register")] // Ändrad rutt till api/auth/register
         public async Task<IActionResult> Register(UserRegistrationDto registrationDto)
         {
             try
@@ -95,8 +96,8 @@ namespace api_carrental.Controllers
                     return Conflict("A user with this email already exists.");
                 }
 
-                // Create new user
-                var newUser = new ApplicationUserDto
+                // Create new user (Ändrad till din riktiga domänmodell ApplicationUser)
+                var newUser = new ApplicationUser
                 {
                     UserName = registrationDto.Email,
                     Email = registrationDto.Email,
@@ -141,16 +142,19 @@ namespace api_carrental.Controllers
 
         //***************************************************************************************************************
 
-        [HttpPost("/login")]
-        [ValidateAntiForgeryToken]
+        [HttpPost("login")] // Ändrad rutt till api/auth/login
         public async Task<IActionResult> Login(LoginUserDto userDto)
         {
             try
             {
                 var user = await _userManager.FindByEmailAsync(userDto.Email);
-                var passwordValid = await _userManager.CheckPasswordAsync(user, userDto.Password);
+                if (user == null)
+                {
+                    return BadRequest("Invalid email or password");
+                }
 
-                if (user == null || passwordValid == false)
+                var passwordValid = await _userManager.CheckPasswordAsync(user, userDto.Password);
+                if (!passwordValid)
                 {
                     return BadRequest("Invalid email or password");
                 }
@@ -161,10 +165,12 @@ namespace api_carrental.Controllers
                 // Generate JWT Token
                 var token = GenerateJwtToken(user, roles);
 
-                return Ok(new {
+                return Ok(new
+                {
                     message = "Login successful",
                     token = token,
-                    user = new {
+                    user = new
+                    {
                         email = user.Email,
                         roles = roles
                     }
@@ -178,7 +184,7 @@ namespace api_carrental.Controllers
 
         //***************************************************************************************************************
 
-        private string GenerateJwtToken(ApplicationUserDto user, IList<string> roles)
+        private string GenerateJwtToken(ApplicationUser user, IList<string> roles) // Ändrad till ApplicationUser
         {
             var jwtKey = _configuration["Jwt:Key"] ?? "YourSuperSecretKeyForJWTTokenGenerationMustBeLongEnough";
             var jwtIssuer = _configuration["Jwt:Issuer"] ?? "CarRentalAPI";
@@ -211,8 +217,5 @@ namespace api_carrental.Controllers
 
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
-
-
-
     }
 }

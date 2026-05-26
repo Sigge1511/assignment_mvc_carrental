@@ -47,7 +47,6 @@ namespace api_carrental.Controllers
 
         //LÄGG TILL NYTT FORDON
         // POST api/<VehicleController>
-        [Authorize(Roles = "Admin")] //Endast admin kan skapa fordon
         [HttpPost]
         public async Task<IActionResult> PostVehicleAsync([Bind("Id,Title,Year,PricePerDay,Description,ImageUrl1,ImageUrl2")] VehicleDto vehicle)
         {
@@ -68,7 +67,6 @@ namespace api_carrental.Controllers
 
         //UPPDATERA FORDON
         // PUT api/<VehicleController>/5
-        [Authorize(Roles = "Admin")] // Endast admin kan uppdatera fordon
         [HttpPut("{id}")]
         public async Task<IActionResult> PutVehicleAsync(int id, [FromBody] VehicleDto vehicle)
         {
@@ -104,7 +102,6 @@ namespace api_carrental.Controllers
 
         //TA BORT FORDON
         // DELETE api/<VehicleController>/5
-        [Authorize(Roles = "Admin")] //Endast admin kan radera fordon
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehicleAsync(int id)
         {
