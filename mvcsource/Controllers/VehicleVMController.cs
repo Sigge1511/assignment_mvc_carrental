@@ -44,7 +44,7 @@ public async Task<IActionResult> Index()
         // Use the named HttpClient with proper base address
         var client = _httpClientFactory.CreateClient("CarRentalAPI");
 
-        var response = await client.GetAsync("VehicleDt");
+        var response = await client.GetAsync("api/VehicleDt");
         if (!response.IsSuccessStatusCode)
         {
             TempData["ErrorMessage"] = $"Misslyckades hämta fordon från API. Status: {response.StatusCode}";
@@ -78,7 +78,7 @@ public async Task<IActionResult> Index()
                 // Use the named HttpClient with proper base address
                 var client = _httpClientFactory.CreateClient("CarRentalAPI");
 
-                var response = await client.GetAsync($"VehicleDt/{id.Value}");
+                var response = await client.GetAsync($"api/VehicleDt/{id.Value}");
                 if (!response.IsSuccessStatusCode)
                 {
                     if (response.StatusCode == System.Net.HttpStatusCode.NotFound) return NotFound();
@@ -126,7 +126,7 @@ public async Task<IActionResult> Index()
                     var vehicleToJson = JsonSerializer.Serialize(vehicle);
                     var vehicleToApi = new StringContent(vehicleToJson, Encoding.UTF8, "application/json");
 
-                    var response = await client.PostAsync("VehicleDt", vehicleToApi);
+                    var response = await client.PostAsync("api/VehicleDt", vehicleToApi);
                     if (response.IsSuccessStatusCode)
                     {
                         TempData["SuccessMessage"] = "Vehicle successfully added!";
@@ -158,7 +158,7 @@ public async Task<IActionResult> Index()
                 // Use the named HttpClient with proper base address
                 var client = _httpClientFactory.CreateClient("CarRentalAPI");
 
-                var response = await client.GetAsync($"VehicleDt/{id.Value}");
+                var response = await client.GetAsync($"api/VehicleDt/{id.Value}");
                 if (!response.IsSuccessStatusCode)
                 {
                     return NotFound();
@@ -202,7 +202,7 @@ public async Task<IActionResult> Index()
                     var vehicleJson = JsonSerializer.Serialize(vehicle);
                     var vehicleToApi = new StringContent(vehicleJson, Encoding.UTF8, "application/json");
 
-                    var response = await client.PutAsync($"VehicleDt/{id}", vehicleToApi);
+                    var response = await client.PutAsync($"api/VehicleDt/{id}", vehicleToApi);
                     if (response.IsSuccessStatusCode)
                     {
                         TempData["SuccessMessage"] = "Vehicle was updated!";
