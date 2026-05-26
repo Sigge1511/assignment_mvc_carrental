@@ -17,7 +17,7 @@ namespace api_carrental
             builder.Services.AddHttpClient("CarRentalAPI", client =>
             {
                 
-                client.BaseAddress = new Uri("https://api-aca.yellowgrass-7eb6864a.germanywestcentral.azurecontainerapps.io");
+                client.BaseAddress = new Uri("https://newapi.calmground-f12cce0a.germanywestcentral.azurecontainerapps.io");
             });
 
             // REGISTRERING AV COOKIE-AUTENTISERING (Ersätter Identity i MVC-appen)
