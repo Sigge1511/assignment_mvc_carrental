@@ -16,8 +16,8 @@ namespace api_carrental
 
             builder.Services.AddHttpClient("CarRentalAPI", client =>
             {
-                // API-projektet körs på HTTPS port 7045 (enligt launchSettings.json)
-                client.BaseAddress = new Uri("https://localhost:7045/api/");
+                
+                client.BaseAddress = new Uri("https://api-aca.yellowgrass-7eb6864a.germanywestcentral.azurecontainerapps.io");
             });
 
             // REGISTRERING AV COOKIE-AUTENTISERING (Ersätter Identity i MVC-appen)
