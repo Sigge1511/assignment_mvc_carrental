@@ -20,7 +20,7 @@ namespace api_carrental.Repos
 
         public async Task<IdentityResult> AddCustomerAsync(ApplicationUserDto appUser)
         {
-            try
+            try 
             {
                 var user = new ApplicationUserDto
                 {
