@@ -43,7 +43,7 @@ jobs:
       - name: Deploy to Azure Container App
         run: |
           az containerapp update \
-            --name api-aca \
+            --name newapi \
             --resource-group DefaultResourceGroup-NEU \
             --image siggesregister2026.azurecr.io/api-carrental:latest
 
